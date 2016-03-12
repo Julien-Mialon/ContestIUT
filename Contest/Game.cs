@@ -44,6 +44,11 @@ namespace Contest
 
         protected virtual IEnumerable<Action> Turn(TurnInfo turn)
         {
+            return RandomTurn(turn);
+        }
+
+	    private IEnumerable<Action> RandomTurn(TurnInfo turn)
+        {
             foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
             {
                 var rand = new Random();
@@ -54,7 +59,7 @@ namespace Contest
                         act = MoveAction(myCell);
                         break;
                     case 1:
-                        float mass = (float)(rand.NextDouble() * myCell.Mass);
+                        var mass = (float)(rand.NextDouble() * myCell.Mass);
                         act = myCell.Mass > 2 * gameInfo.MinimumCellMass ? DivideAction(myCell, mass) : MoveAction(myCell);
                         break;
                     case 2:
@@ -63,8 +68,8 @@ namespace Contest
                 }
                 yield return act;
             }
-
-        }
+	        
+	    }
 
         private Action CreateVirus(Cell cell)
         {
