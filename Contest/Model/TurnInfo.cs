@@ -22,6 +22,19 @@ namespace Contest.Model
 		public uint PlayerId { get; set; }
 
 		public uint IsolatedTurnsRemaining { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="myCell">Cellule qui veut manger</param>
+        /// <param name="ennemyCell">Cellule à changer</param>
+        /// <param name="ratio">Ratio min pour l'absorption</param>
+        /// <returns></returns>
+        public bool IsMangeable(PlayerCell myCell, PlayerCell ennemyCell,float ratio)
+        {
+            //todo à changer si ratio à l'envers
+            return ennemyCell.Mass/myCell.Mass > ratio;
+        }
 	}
 
 	public class Virus
