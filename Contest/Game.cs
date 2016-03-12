@@ -6,43 +6,43 @@ using Action = Contest.Model.Action;
 
 namespace Contest
 {
-    public class Game
-    {
+	public class Game
+	{
         private const uint VirusMaxCount = 64;
-        private readonly Client _client;
+		private readonly Client _client;
         private uint playerId;
         private GameInfo gameInfo;
 
-        public Game(Client client)
-        {
-            _client = client;
-        }
+		public Game(Client client)
+		{
+			_client = client;
+		}
 
-        public void Run(int rapport)
-        {
+        public void Run()
+		{
             gameInfo = _client.ReadServerWelcomeData();
             playerId = _client.ReadInitGameData();
 
-            ProcessInitData();
+			ProcessInitData();
 
-            bool first = true;
-            while (true)
-            {
-                TurnInfo turn = _client.ReadTurnGameData(first);
-                first = false;
+			bool first = true;
+			while (true)
+			{
+				TurnInfo turn = _client.ReadTurnGameData(first);
+				first = false;
 
+                
 
+				_client.SendTurnInstruction(turn, Turn(turn).ToList(), true);
+			}
+		}
 
-                _client.SendTurnInstruction(Turn(turn, rapport));
-            }
+		protected virtual void ProcessInitData()
+		{
+
         }
 
-        protected virtual void ProcessInitData()
-        {
-
-        }
-
-        protected virtual IEnumerable<Action> Turn(TurnInfo turn, int rapport)
+        protected virtual IEnumerable<Action> Turn(TurnInfo turn)
         {
             foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
             {
@@ -79,7 +79,7 @@ namespace Contest
                 }
             };
         }
-
+			
         private Action MoveAction(Cell cell)
         {
             var pos = GenererPosition();
@@ -90,12 +90,12 @@ namespace Contest
                 {
                     X = pos.Item1,
                     Y = pos.Item2
-                }
+		}
             };
         }
 
         private Action DivideAction(Cell cell, float mass)
-        {
+		{
             var pos = GenererPosition();
             return new DivideAction()
             {
@@ -108,14 +108,14 @@ namespace Contest
                 }
             };
         }
-
+			
         private Tuple<float, float> GenererPosition()
         {
             var rand = new Random();
             float x = (float)(rand.NextDouble() * gameInfo.Width);
             float y = (float)(rand.NextDouble() * gameInfo.Height);
             return new Tuple<float, float>(x, y);
-        }
+		}
 
-    }
+	}
 }

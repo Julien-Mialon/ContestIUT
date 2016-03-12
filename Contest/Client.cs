@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Contest.Model;
+using Action = Contest.Model.Action;
 
 namespace Contest
 {
@@ -36,6 +39,7 @@ namespace Contest
 
 			if (header == MessageHeader.WELCOME)
 			{
+				uint size = _client.ReadInt();
 				GameInfo game = new GameInfo();
 				game.Read(_client);
 
@@ -52,7 +56,7 @@ namespace Contest
 			{
 				throw new Exception("Expect game start");
 			}
-
+			uint size = _client.ReadInt();
 			uint playerId = _client.ReadInt();
 			return playerId;
 		}
@@ -67,15 +71,53 @@ namespace Contest
 					throw new Exception("Expect turn begin");
 				}
 			}
-
+			_client.ReadInt();
 			TurnInfo turn = new TurnInfo();
 			turn.Read(_client);
 			return turn;
 		}
 
-		public void SendTurnInstruction()
+		public void SendTurnInstruction(TurnInfo turn, List<Action> actions, bool surrender)
 		{
-			//TODO
+			List<MoveAction> moves = actions.OfType<MoveAction>().ToList();
+			List<DivideAction> divides = actions.OfType<DivideAction>().ToList();
+			List<CreateVirusAction> createVirusAction = actions.OfType<CreateVirusAction>().ToList();
+
+			uint size = 3*4 + 1;
+			size += ((uint)moves.Count)*(4*3);
+			size += ((uint)divides.Count)*(4*4);
+			size += ((uint)createVirusAction.Count)*(4*3);
+
+			_client.WriteInt8(MessageHeader.TURN_ACK);
+			_client.WriteInt(size);
+			_client.WriteInt(turn.TurnId);
+
+			_client.WriteInt((uint)moves.Count);
+			foreach (MoveAction action in moves)
+			{
+				_client.WriteInt(action.CellId);
+				_client.WriteFloat(action.Position.X);
+				_client.WriteFloat(action.Position.Y);
+			}
+
+			_client.WriteInt((uint)divides.Count);
+			foreach (DivideAction action in divides)
+			{
+				_client.WriteInt(action.CellId);
+				_client.WriteFloat(action.Position.X);
+				_client.WriteFloat(action.Position.Y);
+				_client.WriteFloat(action.Mass);
+			}
+
+			_client.WriteInt((uint)createVirusAction.Count);
+			foreach (CreateVirusAction action in createVirusAction)
+			{
+				_client.WriteInt(action.CellId);
+				_client.WriteFloat(action.Position.X);
+				_client.WriteFloat(action.Position.Y);
+			}
+
+			_client.WriteInt8(surrender ? 1 : 0);
 		}
 	}
 }
