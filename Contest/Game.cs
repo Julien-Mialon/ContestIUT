@@ -239,7 +239,7 @@ namespace Contest
 			return toReach;
 		}
 
-		private MoveAction FarmMoveAction(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
+		private MoveAction FarmMoveAction(TurnInfo turn, PlayerCell myCurrentCell, List<bool> cellTarget)
 		{
 			return new MoveAction()
 			{
