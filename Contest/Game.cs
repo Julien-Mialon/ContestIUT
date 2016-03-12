@@ -71,7 +71,7 @@ namespace Contest
 
 				Output(turn);
 
-				if (turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass) < gameInfo.CellStartingMass)
+				if (turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass) < gameInfo.CellStartingMass * 0.75)
 				{
 					_client.SendTurnInstruction(turn, new List<Action>(), true);
 				}
