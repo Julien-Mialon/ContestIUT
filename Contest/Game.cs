@@ -57,6 +57,7 @@ namespace Contest
 			ProcessInitData();
 
 			bool first = true;
+			int dieCount = 0;
 			while (true)
 			{
 				TurnInfo turn = _client.ReadTurnGameData(first);
@@ -72,8 +73,9 @@ namespace Contest
 				Output(turn);
 
 				float mass = turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass);
-                if (mass < gameInfo.CellStartingMass * 0.5)
-				{
+                if (dieCount < 40 || mass < gameInfo.CellStartingMass * 0.5)
+                {
+	                dieCount++;
 					Logger.Error("Sepuku : " + mass);
 					_client.SendTurnInstruction(turn, new List<Action>(), true);
 				}
