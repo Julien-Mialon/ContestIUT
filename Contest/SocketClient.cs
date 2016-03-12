@@ -107,7 +107,7 @@ namespace Contest
 				throw new Exception("SocketClient.ReadInt");
 			}
 
-			return BitConverter.ToInt32(size, 0);
+			return BitConverter.ToSingle(size, 0);
 		}
 
 	    public string ReadLine()
@@ -177,6 +177,22 @@ namespace Contest
 	    {
 			byte[] b = BitConverter.GetBytes(n);
 			Write(b, 0, b.Length);
+		}
+
+	    public ulong ReadInt64()
+	    {
+			const int readSize = sizeof(ulong);
+			Logger.Info("ulong size : " + readSize);
+
+			byte[] size = new byte[readSize];
+			int readCount = Read(size, 0, readSize);
+			if (readCount < readSize)
+			{
+				Logger.Error($"SocketClient.ReadInt64 : invalid read count {readCount}");
+				throw new Exception("SocketClient.ReadInt64");
+			}
+
+			return BitConverter.ToUInt64(size, 0);
 		}
     }
 }

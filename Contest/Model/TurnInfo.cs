@@ -58,6 +58,10 @@ namespace Contest.Model
 
 		public List<PlayerCell> PlayerCells {get;} = new List<PlayerCell>();
 
+		public uint PlayerCount { get; set; }
+
+		public List<Player> Players { get; } = new List<Player>(); 
+
 	    public void Read(SocketClient client)
 	    {
 		    TurnId = client.ReadInt();
@@ -111,6 +115,19 @@ namespace Contest.Model
 					PlayerId = client.ReadInt(),
 					Mass = client.ReadFloat(),
 					IsolatedTurnsRemaining = client.ReadInt()
+			    });
+		    }
+
+		    PlayerCount = client.ReadInt();
+		    for (int i = 0; i < PlayerCount; ++i)
+		    {
+			    Players.Add(new Player()
+			    {
+				    PlayerId = client.ReadInt(),
+					PlayerName = client.ReadString(),
+					CellCount = client.ReadInt(),
+					Mass = client.ReadFloat(),
+					Score = client.ReadInt64()
 			    });
 		    }
 	    }

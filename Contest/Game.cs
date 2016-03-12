@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Contest.Model;
 
 namespace Contest
@@ -26,7 +27,7 @@ namespace Contest
 
 				Turn();
 
-				_client.SendTurnInstruction();
+				_client.SendTurnInstruction(turn, new List<Action>(), true);
 			}
 		}
 
