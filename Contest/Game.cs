@@ -59,13 +59,29 @@ namespace Contest
 			while (true)
 			{
 				TurnInfo turn = _client.ReadTurnGameData(first);
+
+				Output(turn);
+
 				if(first)
 				{
 					first = false;
 					turn = _client.ReadTurnGameData(false);
 				}
 
-                _client.SendTurnInstruction(turn, Turn(turn).ToList(), false);
+				Output(turn);
+
+				_client.SendTurnInstruction(turn, Turn(turn).ToList(), false);
+			}
+		}
+
+		private void Output(TurnInfo turn)
+		{
+			Logger.Info("Turn : " + turn.TurnId);
+			Logger.Info($"My cells : ({turn.CellCount})");
+
+			foreach (var i in turn.Cells)
+			{
+				Logger.Info($"(id = {i.Id}, mass={i.Mass}, position={i.Position.X};{i.Position.Y}");
 			}
 		}
 
