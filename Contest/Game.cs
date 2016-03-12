@@ -164,7 +164,7 @@ namespace Contest
                 foreach (var neutralCell in turn.Cells.Where(x=>turn.InitialCellRemainingTurn[turn.Cells.IndexOf(x)]==0 && cellTarget[turn.Cells.IndexOf(x)]))
                 {
                     var tmp = Compare(myCurrentCell, neutralCell);
-                    if (tmp < min)
+                    if (tmp < min && !IsInCorner(neutralCell))
                     {
                         min = tmp;
                         toReach = neutralCell;
