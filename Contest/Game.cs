@@ -120,10 +120,9 @@ namespace Contest
 
 	    private float compare(Cell a, Cell b)
 	    {
-            //TODO faire comparaison
 	        var posa = a.Position;
 	        var posb = b.Position;
-	        return Math.Sqrt((posb.Y-posa.Y)*(posb.Y-posa.Y)
+	        return (float)Math.Sqrt((posb.Y-posa.Y)*(posb.Y-posa.Y)
                 +(posb.Y-posa.Y)*(posb.Y-posa.Y));
         
         }   
