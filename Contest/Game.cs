@@ -192,12 +192,17 @@ namespace Contest
 			
 			if (!IsInCorner(toReach) && cellTarget[0])
 			{
+				cellTarget[turn.Cells.IndexOf(toReach)] = false;
+				return toReach;
+
+				/*
 				float distance = Compare(myCurrentCell, toReach);
 				if (distance/availableDistance < 5)
 				{
 					cellTarget[turn.Cells.IndexOf(toReach)] = false;
 					return toReach;
 				}
+				*/
 			}
 
 			foreach (var neutralCell in turn.Cells.Where((x, index) => cellTarget[index]))
@@ -209,12 +214,16 @@ namespace Contest
 					continue;
 				}
 
+				cellTarget[turn.Cells.IndexOf(neutralCell)] = false;
+				return neutralCell;
+				/*
 				float distance = Compare(myCurrentCell, neutralCell);
 				if (distance / availableDistance < 5)
 				{
 					cellTarget[turn.Cells.IndexOf(neutralCell)] = false;
 					return neutralCell;
 				}
+				*/
 			}
 			cellTarget[turn.Cells.IndexOf(toReach)] = false;
 			return toReach;
