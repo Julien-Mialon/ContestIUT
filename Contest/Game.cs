@@ -41,7 +41,7 @@ namespace Contest
 			Logger.Info($"GameInfo : initial neutral cell mass = {gameInfo.InitialNeutralCellMass}");
 			Logger.Info($"GameInfo : initial repop time = {gameInfo.InitialNeutralCellRepopTime}");
 			Logger.Info($"GameInfo : initial neutral count = {gameInfo.InitialCellCount}");
-	        for (int i = 0; i < 3 && i < gameInfo.InitialPositions.Count; ++i)
+	        for (int i = 0; i < gameInfo.InitialPositions.Count; ++i)
 	        {
 		        Position cell = gameInfo.InitialPositions[i];
 
