@@ -11,7 +11,7 @@ namespace Contest
 		private const uint VirusMaxCount = 64;
 		private readonly Client _client;
 		private uint playerId;
-		private GameInfo gameInfo;
+		public static GameInfo gameInfo;
 		private Random random = new Random(DateTime.Now.Millisecond);
 
 		public Game(Client client)
@@ -73,7 +73,7 @@ namespace Contest
 				Output(turn);
 
 				float mass = turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass);
-                if (dieCount < 0 || mass < gameInfo.CellStartingMass * 0.5)
+                if (dieCount < 0 || mass < gameInfo.CellStartingMass * 0.75)
                 {
 	                dieCount++;
 					Logger.Error("Sepuku : " + mass);
@@ -179,8 +179,16 @@ namespace Contest
 			};
 		}
 
-		private Cell NextCelltoReach(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
+		private Cell NextCelltoReach(TurnInfo turn, PlayerCell myCurrentCell, List<bool> cellTarget)
 		{
+			List<PlayerCell> enemy = turn.PlayerCells.Where(x => x.PlayerId != playerId).ToList();
+			var enemyToEat = enemy.FirstOrDefault(x => myCurrentCell.IsMangeable(x, gameInfo.MassRatioToAbsorb));
+
+			if (enemyToEat != null)
+		{
+				return enemyToEat;
+			}
+
 			Cell toReach = turn.Cells[0];
 			float availableDistance = (gameInfo.CellSpeed - myCurrentCell.Mass*gameInfo.SpeedLossFactor);
 
@@ -196,9 +204,10 @@ namespace Contest
 					}
 					return false;
 				}) ?? turn.Cells[0];
-				
-			}
 
+				return list.FirstOrDefault();	
+			}
+			
 
 			if (!IsInCorner(toReach))
 			{
@@ -230,7 +239,7 @@ namespace Contest
 			return toReach;
 		}
 
-		private MoveAction FarmMoveAction(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
+		private MoveAction FarmMoveAction(TurnInfo turn, PlayerCell myCurrentCell, List<bool> cellTarget)
 		{
 			return new MoveAction()
 			{
