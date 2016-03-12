@@ -53,7 +53,7 @@ namespace Contest.Model
 
 			foreach (var ennemy in othercells.Where(x => !IsMangeable(x, Game.gameInfo.MassRatioToAbsorb)))
 			{
-				test |= Collision(Position, ennemy);
+				test |= Collision(cible, ennemy);
 				if (test) return true;
 			}
 			return false;
