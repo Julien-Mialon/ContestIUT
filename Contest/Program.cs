@@ -53,9 +53,9 @@ prodMode:
 			{
 				client.Connect();
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				Logger.Critical("Unable to connect to server");
+				Logger.Critical("Unable to connect to server " + ex);
 				return;
 			}
 

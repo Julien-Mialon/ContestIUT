@@ -33,15 +33,20 @@ namespace Contest
 				});
 
 			    e.WaitOne();
+			    
+			    Logger.Info("Connexion...");
 			    if (_client.Connected)
 			    {
+					Logger.Info("Connected");
 				    _stream = _client.GetStream();
 				    return true;
 			    }
+			    Logger.Info("Not connected...");
 			    return false;
 		    }
-		    catch (Exception)
+		    catch (Exception ex)
 		    {
+				Logger.Info("Unable to connect : " + ex);
 			    return false;
 		    }
 	    }
@@ -53,7 +58,7 @@ namespace Contest
 			do
 			{
 				iterationCount = _stream.Read(storage, offset + readCount, length - readCount);
-				Logger.Debug($"\tRead count for iteration : {iterationCount}");
+				//Logger.Debug($"\tRead count for iteration : {iterationCount} expected {length}");
 				if (iterationCount <= 0)
 				{
 					break;
@@ -76,7 +81,8 @@ namespace Contest
 			    throw new Exception("SocketClient.ReadChar");
 		    }
 
-		    return BitConverter.ToChar(size, 0);
+			return (char)size[0];
+		    //return BitConverter.ToChar(size, 0);
 	    }
 
 		public uint ReadInt()
@@ -97,7 +103,7 @@ namespace Contest
 	    public float ReadFloat()
 	    {
 			const int readSize = sizeof(float);
-			Logger.Info("Float size : " + readSize);
+			//Logger.Info("Float size : " + readSize);
 
 			byte[] size = new byte[readSize];
 			int readCount = Read(size, 0, readSize);
@@ -157,9 +163,11 @@ namespace Contest
 
 	    public void WriteInt8(int n)
 	    {
-		    byte[] b = BitConverter.GetBytes((char)n);
+		    byte[] b = BitConverter.GetBytes(n);
+	
+			//Logger.Debug("Send WriteInt8 : " + b[0] + " "+ b[1] + " " + b[2] + " " + b[3]);
 
-		    Write(b, b.Length - 1, 1);
+		    Write(b, 0, 1);
 	    }
 
 	    public void WriteInt(uint n)
