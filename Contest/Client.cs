@@ -57,15 +57,20 @@ namespace Contest
 			return playerId;
 		}
 
-		public void ReadTurnGameData()
+		public TurnInfo ReadTurnGameData(bool first)
 		{
-			int header = _client.ReadChar();
-			if (header != MessageHeader.TURN)
+			if (!first)
 			{
-				throw new Exception("Expect turn begin");
+				int header = _client.ReadChar();
+				if (header != MessageHeader.TURN)
+				{
+					throw new Exception("Expect turn begin");
+				}
 			}
 
-
+			TurnInfo turn = new TurnInfo();
+			turn.Read(_client);
+			return turn;
 		}
 
 		public void SendTurnInstruction()
