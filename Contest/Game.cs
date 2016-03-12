@@ -50,7 +50,7 @@ namespace Contest
 
             Logger.Info("Waiting for init game data");
             playerId = _client.ReadInitGameData();
-            
+
 			Logger.Info("Get playerId : " + playerId);
             
 			ProcessInitData();
@@ -64,7 +64,7 @@ namespace Contest
 
 				if(first)
 				{
-					first = false;
+				first = false;
 					turn = _client.ReadTurnGameData(false);
 				}
 
@@ -97,16 +97,25 @@ namespace Contest
 
         private IEnumerable<Action> FarmIA(TurnInfo turn)
         {
-            Cell toReach;
             foreach (var myCell in turn.PlayerCells.Where(x=>x.PlayerId==playerId))
             {
+                var toReach = turn.Cells[0];
+                var min = compare(myCell, toReach);
                 foreach (var neutralCell in turn.Cells)
                 {
-	                compare(myCell, neutralCell);
+                    var tmp = compare(myCell, neutralCell);
+                    if (tmp < min)
+                    {
+                        min = tmp;
+                        toReach = neutralCell;
+                    }
                 }
+                yield return new MoveAction()
+                {
+                    CellId = myCell.Id,
+                    Position = toReach.Position
+                };
             }
-
-	        return Enumerable.Empty<Action>();
         }
 
 	    private float compare(Cell a, Cell b)
@@ -114,9 +123,11 @@ namespace Contest
             //TODO faire comparaison
 	        var posa = a.Position;
 	        var posb = b.Position;
-	        return 1f;
-	    }
-
+	        return Math.Sqrt((posb.Y-posa.Y)*(posb.Y-posa.Y)
+                +(posb.Y-posa.Y)*(posb.Y-posa.Y));
+        
+        }   
+        
         #region Random IA
 	    private IEnumerable<Action> RandomTurn(TurnInfo turn)
         {
