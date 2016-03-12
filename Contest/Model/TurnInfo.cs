@@ -75,8 +75,8 @@ namespace Contest.Model
 				+ (cible.Y - enemy.Position.Y) * (cible.Y - enemy.Position.Y))
 				> (Math.Max(Mass, enemy.Mass) + enemy.CurrentSpeed))
 
-				return true;
-			return false;
+				return false;
+			return true;
 		}
 	}
 }
