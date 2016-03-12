@@ -73,7 +73,7 @@ namespace Contest
 				Output(turn);
 
 				float mass = turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass);
-                if (dieCount < 0 || mass < gameInfo.CellStartingMass * 0.5)
+                if (dieCount < 0 || mass < gameInfo.CellStartingMass * 0.75)
                 {
 	                dieCount++;
 					Logger.Error("Sepuku : " + mass);
