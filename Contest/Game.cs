@@ -6,39 +6,39 @@ using Action = Contest.Model.Action;
 
 namespace Contest
 {
-	public class Game
-	{
+    public class Game
+    {
         private const uint VirusMaxCount = 64;
-		private readonly Client _client;
+        private readonly Client _client;
         private uint playerId;
         private GameInfo gameInfo;
 
-		public Game(Client client)
-		{
-			_client = client;
-		}
+        public Game(Client client)
+        {
+            _client = client;
+        }
 
         public void Run()
-		{
+        {
             gameInfo = _client.ReadServerWelcomeData();
             playerId = _client.ReadInitGameData();
 
-			ProcessInitData();
+            ProcessInitData();
 
-			bool first = true;
-			while (true)
-			{
-				TurnInfo turn = _client.ReadTurnGameData(first);
-				first = false;
+            bool first = true;
+            while (true)
+            {
+                TurnInfo turn = _client.ReadTurnGameData(first);
+                first = false;
 
-                
 
-				_client.SendTurnInstruction(turn, Turn(turn).ToList(), true);
-			}
-		}
 
-		protected virtual void ProcessInitData()
-		{
+                _client.SendTurnInstruction(turn, Turn(turn).ToList(), false);
+            }
+        }
+
+        protected virtual void ProcessInitData()
+        {
 
         }
 
@@ -47,7 +47,13 @@ namespace Contest
             return RandomTurn(turn);
         }
 
-	    private IEnumerable<Action> RandomTurn(TurnInfo turn)
+        /*private IEnumerable<Action> FarmIA(TurnInfo turn)
+        {
+            
+        } */
+
+        #region Random IA
+        private IEnumerable<Action> RandomTurn(TurnInfo turn)
         {
             foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
             {
@@ -68,8 +74,8 @@ namespace Contest
                 }
                 yield return act;
             }
-	        
-	    }
+
+        }
 
         private Action CreateVirus(Cell cell)
         {
@@ -84,7 +90,7 @@ namespace Contest
                 }
             };
         }
-			
+
         private Action MoveAction(Cell cell)
         {
             var pos = GenererPosition();
@@ -95,12 +101,12 @@ namespace Contest
                 {
                     X = pos.Item1,
                     Y = pos.Item2
-		}
+                }
             };
         }
 
         private Action DivideAction(Cell cell, float mass)
-		{
+        {
             var pos = GenererPosition();
             return new DivideAction()
             {
@@ -113,14 +119,14 @@ namespace Contest
                 }
             };
         }
-			
+
         private Tuple<float, float> GenererPosition()
         {
             var rand = new Random();
             float x = (float)(rand.NextDouble() * gameInfo.Width);
             float y = (float)(rand.NextDouble() * gameInfo.Height);
             return new Tuple<float, float>(x, y);
-		}
-
-	}
+        }
+        #endregion
+    }
 }
