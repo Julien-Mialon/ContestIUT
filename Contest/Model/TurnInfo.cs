@@ -26,15 +26,15 @@ namespace Contest.Model
 
 		public uint IsolatedTurnsRemaining { get; set; }
 
-        public float CurrentSpeed => Game.gameInfo.CellSpeed - Mass*Game.gameInfo.SpeedLossFactor;
+		public float CurrentSpeed => Game.gameInfo.CellSpeed - Mass * Game.gameInfo.SpeedLossFactor;
 
-        public bool IsMangeable(PlayerCell ennemyCell,float ratio)
+		public bool IsMangeable(PlayerCell ennemyCell, float ratio)
         {
             //todo à changer si ratio à l'envers
             return Mass / ennemyCell.Mass > ratio;
         }
         
-        public bool Collision(Position cible, List<PlayerCell> othercells)
+            public bool Collision(Position cible, List<PlayerCell> othercells)
         {
             var test = false;
            
@@ -96,7 +96,7 @@ namespace Contest.Model
 
 		public uint PlayerCellCount { get; set; }
 
-		public List<PlayerCell> PlayerCells {get;} = new List<PlayerCell>();
+	public List<PlayerCell> PlayerCells { get; } = new List<PlayerCell>();
 
 		public uint PlayerCount { get; set; }
 
@@ -120,7 +120,7 @@ namespace Contest.Model
 		    {
 			    Cells.Add(new Cell()
 			    {
-				    Id =client.ReadInt(),
+				Id = client.ReadInt(),
 					Mass = client.ReadFloat(),
 					Position = new Position()
 					{
@@ -175,4 +175,4 @@ namespace Contest.Model
 		    }
 	    }
     }
-}
+

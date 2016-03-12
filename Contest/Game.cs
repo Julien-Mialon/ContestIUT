@@ -185,7 +185,7 @@ namespace Contest
 			var enemyToEat = enemy.FirstOrDefault(x => myCurrentCell.IsMangeable(x, gameInfo.MassRatioToAbsorb));
 
 			if (enemyToEat != null)
-		{
+			{
 				return enemyToEat;
 			}
 
@@ -194,46 +194,29 @@ namespace Contest
 
 			if (Math.Abs(toReach.Mass - gameInfo.InitialNeutralCellMass) < 1)
 			{
-				return turn.Cells.FirstOrDefault(x =>
-				{
-					float distance = Compare(myCurrentCell, x);
-					if (distance / availableDistance < 5 && distance / availableDistance > 4)
-					{
-						cellTarget[turn.Cells.IndexOf(x)] = false;
-						return true;
-					}
-					return false;
-				}) ?? turn.Cells[0];
+				Logger.Error("### => Go default");
+				var list = turn.Cells.Where(x => Compare(x, myCurrentCell)/availableDistance > 10).ToList();
 
 				return list.FirstOrDefault();	
 			}
 			
-
-			if (!IsInCorner(toReach))
-			{
-				float distance = Compare(myCurrentCell, toReach);
-				if (distance/availableDistance < 5)
+			if ((!IsInCorner(toReach) || myCurrentCell.Mass > gameInfo.MaximumCellMass*0.5) && cellTarget[0])
 				{
 					cellTarget[turn.Cells.IndexOf(toReach)] = false;
 					return toReach;
 				}
-			}
 
 			foreach (var neutralCell in turn.Cells.Where((x, index) => cellTarget[index]))
 			{
 				//var tmp = Compare(myCurrentCell, neutralCell);
 
-				if (IsInCorner(neutralCell))
+				if (IsInCorner(neutralCell) && myCurrentCell.Mass < gameInfo.MaximumCellMass * 0.5)
 				{
 					continue;
 				}
 
-				float distance = Compare(myCurrentCell, neutralCell);
-				if (distance / availableDistance < 5)
-				{
-					cellTarget[turn.Cells.IndexOf(neutralCell)] = false;
-					return neutralCell;
-				}
+				cellTarget[turn.Cells.IndexOf(neutralCell)] = false;
+				return neutralCell;
 			}
 			cellTarget[turn.Cells.IndexOf(toReach)] = false;
 			return toReach;
