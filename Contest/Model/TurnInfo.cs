@@ -1,6 +1,4 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Contest.Model
 {
@@ -25,39 +23,12 @@ namespace Contest.Model
 
 		public uint IsolatedTurnsRemaining { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="myCell">Cellule qui veut manger</param>
-        /// <param name="ennemyCell">Cellule à changer</param>
-        /// <param name="ratio">Ratio min pour l'absorption</param>
-        /// <returns></returns>
-        public bool IsMangeable(PlayerCell myCell, PlayerCell ennemyCell,float ratio)
+        public float CurrentSpeed { get; }
+
+        public bool IsMangeable(PlayerCell ennemyCell,float ratio)
         {
             //todo à changer si ratio à l'envers
-            return ennemyCell.Mass/myCell.Mass > ratio;
-        }
-
-        public bool Collision(Position cible, List<PlayerCell> othercells)
-        {
-            var test = false;
-           
-            foreach (var ennemy in othercells)
-            {
-                test |= Collision(Position, ennemy);
-                if (test) return true;
-            }
-            return false;
-        }
-
-        public bool Collision(Position moi, PlayerCell cible)
-        {
-            if (Math.Sqrt((this.Position.X-cible.Position.X)*(this.Position.X-cible.Position.X)
-                + (this.Position.Y-cible.Position.Y)*(this.Position.Y-cible.Position.Y))
-                >(this.Mass+cible.CurrentSpeed))
-                
-                return true;    
-            return false;
+            return Mass / ennemyCell.Mass > ratio;
         }
 	}
 
