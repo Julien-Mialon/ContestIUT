@@ -157,10 +157,10 @@ namespace Contest
 	    private Cell NextCelltoReach(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
             {
                 var toReach = turn.Cells[0];
-            var min = compare(myCurrentCell, toReach);
+            var min = Compare(myCurrentCell, toReach);
                 foreach (var neutralCell in turn.Cells.Where(x=>turn.InitialCellRemainingTurn[turn.Cells.IndexOf(x)]==0 && cellTarget[turn.Cells.IndexOf(x)]))
                 {
-                    var tmp = compare(myCurrentCell, neutralCell);
+                    var tmp = Compare(myCurrentCell, neutralCell);
                     if (tmp < min)
                     {
                         min = tmp;
@@ -180,7 +180,7 @@ namespace Contest
                 };
             
         }
-	    private float compare(Cell a, Cell b)
+	    private float Compare(Cell a, Cell b)
 	    {
 	        var posa = a.Position;
 	        var posb = b.Position;
@@ -190,17 +190,17 @@ namespace Contest
         }   
         
 
-        private bool isInCorner(Cell me)
+        private bool IsInCorner(Cell me)
         {
-            return isInCorner(me.Position.X, me.Position.Y);
+            return IsInCorner(me.Position.X, me.Position.Y);
         }
-        private bool isInCorner(float x, float y)
+        private bool IsInCorner(float x, float y)
         {
-            if(x < 0.25*gameInfo.Width || x > 0.75*gameInfo.Width || y < 0.25*gameInfo.Height || y > 0.75*gameInfo.Height)
+            if(x < 0.15*gameInfo.Width || x > 0.85*gameInfo.Width || y < 0.15*gameInfo.Height || y > 0.85*gameInfo.Height)
                 return true;
             return false;
 	    }
-#endregion
+        #endregion
         #region Random IA
 	    private IEnumerable<Action> RandomTurn(TurnInfo turn)
         {
@@ -210,15 +210,15 @@ namespace Contest
                 Action act = null;
                 switch (rand.Next(3))
                 {
-                    case 0:
-                        act = MoveAction(myCell);
-                        break;
                     case 1:
                         var mass = (float)(rand.NextDouble() * myCell.Mass);
                         act = myCell.Mass > 2 * gameInfo.MinimumCellMass ? DivideAction(myCell, mass) : MoveAction(myCell);
                         break;
                     case 2:
                         act = turn.VirusCount < VirusMaxCount ? CreateVirus(myCell) : MoveAction(myCell);
+                        break;
+                   default:
+                        act = MoveAction(myCell);
                         break;
                 }
                 yield return act;
