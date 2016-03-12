@@ -142,16 +142,19 @@ namespace Contest
 			List<bool> cellTarget = new List<bool>();
 			turn.Cells.ForEach(x => cellTarget.Add(true));
 
-			int cellCount = turn.PlayerCells.Count(x => x.PlayerId == playerId);
-			foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
+			List<PlayerCell> myCells = turn.PlayerCells.Where(x => x.PlayerId == playerId).ToList();
+			int cellCount = myCells.Count;
+			foreach (var myCell in myCells)
 			{
-				if (cellCount + 1 < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 8 * gameInfo.MinimumCellMass)
+				if (cellCount + 1 < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 4 * gameInfo.CellStartingMass)
 				{
+					Logger.Error("Splitting");
 					yield return FarmDivideAction(turn, myCell, cellTarget);
 					cellCount++;
 				}
 				else
 				{
+					Logger.Error("Moving");
 					yield return FarmMoveAction(turn, myCell, cellTarget);
 				}
 			}
