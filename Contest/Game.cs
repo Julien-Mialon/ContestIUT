@@ -179,8 +179,16 @@ namespace Contest
 			};
 		}
 
-		private Cell NextCelltoReach(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
+		private Cell NextCelltoReach(TurnInfo turn, PlayerCell myCurrentCell, List<bool> cellTarget)
 		{
+			List<PlayerCell> enemy = turn.PlayerCells.Where(x => x.PlayerId != playerId).ToList();
+			var enemyToEat = enemy.FirstOrDefault(x => myCurrentCell.IsMangeable(x, gameInfo.MassRatioToAbsorb));
+
+			if (enemyToEat != null)
+			{
+				return enemyToEat;
+			}
+
 			Cell toReach = turn.Cells[0];
 			float availableDistance = (gameInfo.CellSpeed - myCurrentCell.Mass*gameInfo.SpeedLossFactor);
 
@@ -189,7 +197,7 @@ namespace Contest
 				Logger.Error("### => Go default");
 				var list = turn.Cells.Where(x => Compare(x, myCurrentCell)/availableDistance > 5).ToList();
 
-				return list.FirstOrDefault();	
+				return list[random.Next(list.Count)];	
 			}
 			
 			if (!IsInCorner(toReach) && cellTarget[0])
