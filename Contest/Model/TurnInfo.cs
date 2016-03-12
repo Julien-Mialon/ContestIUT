@@ -73,8 +73,8 @@ namespace Contest.Model
 		{
 			if (Math.Sqrt((cible.X - enemy.Position.X) * (cible.X - enemy.Position.X)
 				+ (cible.Y - enemy.Position.Y) * (cible.Y - enemy.Position.Y))
-				> Game.gameInfo.CellSpeed - Math.Max(Mass, enemy.Mass) * 
-				Game.gameInfo.SpeedLossFactor)
+				> (Game.gameInfo.CellSpeed - Math.Max(Mass, enemy.Mass) * 
+				Game.gameInfo.SpeedLossFactor) *2)
 				
 
 				return true;
