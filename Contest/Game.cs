@@ -192,19 +192,19 @@ namespace Contest
 			Cell toReach = turn.Cells[0];
 			float availableDistance = (gameInfo.CellSpeed - myCurrentCell.Mass*gameInfo.SpeedLossFactor);
 
-			if (Math.Abs(toReach.Mass - gameInfo.InitialNeutralCellMass) < 0.05)
+			if (Math.Abs(toReach.Mass - gameInfo.InitialNeutralCellMass) < 1)
 			{
 				Logger.Error("### => Go default");
 				var list = turn.Cells.Where(x => Compare(x, myCurrentCell)/availableDistance > 10).ToList();
 
-				return list[random.Next(list.Count)];	
+				return list.FirstOrDefault();	
 			}
 			
 			if ((!IsInCorner(toReach) || myCurrentCell.Mass > gameInfo.MaximumCellMass*0.5) && cellTarget[0])
-			{
-				cellTarget[turn.Cells.IndexOf(toReach)] = false;
-				return toReach;
-			}
+				{
+					cellTarget[turn.Cells.IndexOf(toReach)] = false;
+					return toReach;
+				}
 
 			foreach (var neutralCell in turn.Cells.Where((x, index) => cellTarget[index]))
 			{
