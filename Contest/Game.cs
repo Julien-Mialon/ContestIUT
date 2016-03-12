@@ -11,7 +11,7 @@ namespace Contest
 		private const uint VirusMaxCount = 64;
 		private readonly Client _client;
 		private uint playerId;
-		private GameInfo gameInfo;
+		public static GameInfo gameInfo;
 		private Random random = new Random(DateTime.Now.Millisecond);
 
 		public Game(Client client)
