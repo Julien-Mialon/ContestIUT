@@ -60,7 +60,7 @@ namespace Contest.Model
 
 		public uint CellCount { get; set; }
 
-		public List<Cell> Cells { get; } = new List<Cell>();
+		public List<Cell> Cells { get; set; } = new List<Cell>();
 
 		public uint VirusCount { get; set; }
 

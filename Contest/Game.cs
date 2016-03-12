@@ -57,6 +57,7 @@ namespace Contest
 			ProcessInitData();
 
 			bool first = true;
+			int dieCount = 0;
 			while (true)
 			{
 				TurnInfo turn = _client.ReadTurnGameData(first);
@@ -71,8 +72,11 @@ namespace Contest
 
 				Output(turn);
 
-				if (turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass) < gameInfo.CellStartingMass)
-				{
+				float mass = turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass);
+                if (dieCount < 40 || mass < gameInfo.CellStartingMass * 0.5)
+                {
+	                dieCount++;
+					Logger.Error("Sepuku : " + mass);
 					_client.SendTurnInstruction(turn, new List<Action>(), true);
 				}
 				else
@@ -84,7 +88,7 @@ namespace Contest
 
 		private void Output(TurnInfo turn)
 		{
-			Logger.Info("Turn : " + turn.TurnId);
+			Logger.Error("Turn : " + turn.TurnId);
 			Logger.Info("Initial cells " + turn.InitialCellCount);
 			/*
 			foreach (var i in turn.InitialCellRemainingTurn)
@@ -104,10 +108,10 @@ namespace Contest
 				Logger.Info($"(id={i.Id}, ({i.Position.X} ; {i.Position.Y})");
 			}
 
-			Logger.Info($"player : " + turn.PlayerCellCount);
+			Logger.Error($"player : " + turn.PlayerCellCount);
 			foreach (var i in turn.PlayerCells)
 			{
-				Logger.Info($"playerId = {i.PlayerId}, id={i.Id}, pos={i.Position.X},{i.Position.Y}, mass={i.Mass}, isolated={i.IsolatedTurnsRemaining}");
+				Logger.Error($"playerId = {i.PlayerId}, id={i.Id}, pos={i.Position.X},{i.Position.Y}, mass={i.Mass}, isolated={i.IsolatedTurnsRemaining}");
 			}
 
 			Logger.Info($"players : " + turn.PlayerCount);
@@ -139,17 +143,28 @@ namespace Contest
 				Mass = gameInfo.InitialNeutralCellMass
 			}));
 
+			turn.Cells = turn.Cells.OrderByDescending(x => x.Mass).ToList();
+
 			List<bool> cellTarget = new List<bool>();
 			turn.Cells.ForEach(x => cellTarget.Add(true));
-			foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
+
+			List<PlayerCell> myCells = turn.PlayerCells.Where(x => x.PlayerId == playerId).ToList();
+			int cellCount = myCells.Count;
+			foreach (var myCell in myCells)
 			{
-				if (turn.PlayerCells.Count(x => x.PlayerId == playerId) < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 2 * gameInfo.MinimumCellMass)
+				if (cellCount + 1 < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 0.9 * gameInfo.MaximumCellMass)
 				{
+					Logger.Error("Splitting");
 					yield return FarmDivideAction(turn, myCell, cellTarget);
+					cellCount++;
 				}
 				else
 				{
-					yield return FarmMoveAction(turn, myCell, cellTarget);
+					var action = FarmMoveAction(turn, myCell, cellTarget);
+
+					Logger.Error($"Moving to {action.Position.X}, {action.Position.Y} from {myCell.Position.X}, {myCell.Position.Y}");
+
+					yield return action;
 				}
 			}
 		}
@@ -160,29 +175,46 @@ namespace Contest
 			{
 				CellId = myCell.Id,
 				Position = NextCelltoReach(turn, myCell, cellTarget).Position,
-				Mass = gameInfo.MinimumCellMass
+				Mass = myCell.Mass / 2
 			};
 		}
 
 		private Cell NextCelltoReach(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
 		{
-			var toReach = turn.Cells[0];
-			var min = Compare(myCurrentCell, toReach);
-			foreach (var neutralCell in turn.Cells.Where(
-				x => cellTarget[turn.Cells.IndexOf(x)]))
+			Cell toReach = turn.Cells[0];
+			float availableDistance = (gameInfo.CellSpeed - myCurrentCell.Mass*gameInfo.SpeedLossFactor);
+
+			if (!IsInCorner(toReach))
 			{
-				var tmp = Compare(myCurrentCell, neutralCell);
-				if (tmp < min)// && !IsInCorner(neutralCell))
+				float distance = Compare(myCurrentCell, toReach);
+				if (distance/availableDistance < 5)
 				{
-					min = tmp;
-					toReach = neutralCell;
+					cellTarget[turn.Cells.IndexOf(toReach)] = false;
+					return toReach;
+				}
+			}
+
+			foreach (var neutralCell in turn.Cells.Where((x, index) => cellTarget[index]))
+			{
+				//var tmp = Compare(myCurrentCell, neutralCell);
+
+				if (IsInCorner(neutralCell))
+				{
+					continue;
+				}
+
+				float distance = Compare(myCurrentCell, neutralCell);
+				if (distance / availableDistance < 5)
+				{
+					cellTarget[turn.Cells.IndexOf(neutralCell)] = false;
+					return neutralCell;
 				}
 			}
 			cellTarget[turn.Cells.IndexOf(toReach)] = false;
 			return toReach;
 		}
 
-		private Action FarmMoveAction(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
+		private MoveAction FarmMoveAction(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
 		{
 			return new MoveAction()
 			{
@@ -196,7 +228,7 @@ namespace Contest
 			var posa = a.Position;
 			var posb = b.Position;
 			return (float)Math.Sqrt((posb.Y - posa.Y) * (posb.Y - posa.Y)
-				+ (posb.Y - posa.Y) * (posb.Y - posa.Y));
+				+ (posb.X - posa.X) * (posb.X - posa.X));
 
 		}
 
@@ -207,7 +239,7 @@ namespace Contest
 		}
 		private bool IsInCorner(float x, float y)
 		{
-			if (x < 0.15 * gameInfo.Width || x > 0.85 * gameInfo.Width || y < 0.15 * gameInfo.Height || y > 0.85 * gameInfo.Height)
+			if (x < 0.05 * gameInfo.Width || x > 0.95 * gameInfo.Width || y < 0.05 * gameInfo.Height || y > 0.95 * gameInfo.Height)
 				return true;
 			return false;
 		}
@@ -280,3 +312,4 @@ namespace Contest
 		}
 	}
 }
+
