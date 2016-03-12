@@ -187,7 +187,9 @@ namespace Contest
 			if (Math.Abs(toReach.Mass - gameInfo.InitialNeutralCellMass) < 0.05)
 			{
 				Logger.Error("### => Go default");
-				return turn.Cells[random.Next(turn.Cells.Count)];	
+				var list = turn.Cells.Where(x => Compare(x, myCurrentCell)/availableDistance > 5).ToList();
+
+				return list.FirstOrDefault();	
 			}
 			
 			if (!IsInCorner(toReach) && cellTarget[0])
