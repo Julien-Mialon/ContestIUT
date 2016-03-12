@@ -104,10 +104,10 @@ namespace Contest
 				Logger.Info($"(id={i.Id}, ({i.Position.X} ; {i.Position.Y})");
 			}
 
-			Logger.Info($"player : " + turn.PlayerCellCount);
+			Logger.Error($"player : " + turn.PlayerCellCount);
 			foreach (var i in turn.PlayerCells)
 			{
-				Logger.Info($"playerId = {i.PlayerId}, id={i.Id}, pos={i.Position.X},{i.Position.Y}, mass={i.Mass}, isolated={i.IsolatedTurnsRemaining}");
+				Logger.Error($"playerId = {i.PlayerId}, id={i.Id}, pos={i.Position.X},{i.Position.Y}, mass={i.Mass}, isolated={i.IsolatedTurnsRemaining}");
 			}
 
 			Logger.Info($"players : " + turn.PlayerCount);
