@@ -73,7 +73,7 @@ namespace Contest
 				Output(turn);
 
 				float mass = turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass);
-                if (dieCount < 40 || mass < gameInfo.CellStartingMass * 0.5)
+                if (dieCount < 0 || mass < gameInfo.CellStartingMass * 0.5)
                 {
 	                dieCount++;
 					Logger.Error("Sepuku : " + mass);
@@ -183,6 +183,22 @@ namespace Contest
 		{
 			Cell toReach = turn.Cells[0];
 			float availableDistance = (gameInfo.CellSpeed - myCurrentCell.Mass*gameInfo.SpeedLossFactor);
+
+			if (Math.Abs(toReach.Mass - gameInfo.InitialNeutralCellMass) < 1)
+			{
+				return turn.Cells.FirstOrDefault(x =>
+				{
+					float distance = Compare(myCurrentCell, x);
+					if (distance / availableDistance < 5 && distance / availableDistance > 4)
+					{
+						cellTarget[turn.Cells.IndexOf(x)] = false;
+						return true;
+					}
+					return false;
+				}) ?? turn.Cells[0];
+				
+			}
+
 
 			if (!IsInCorner(toReach))
 			{
