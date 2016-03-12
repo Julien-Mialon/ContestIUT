@@ -28,6 +28,11 @@ namespace Contest.Model
             //todo à changer si ratio à l'envers
             return Mass / ennemyCell.Mass > ratio;
         }
+
+        public bool Collision(Position cible, List<PlayerCell> othercells)
+        {
+            return true;
+        }
 	}
 
 	public class Virus
