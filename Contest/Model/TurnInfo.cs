@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Contest;
 using Contest.Model;
 
@@ -38,6 +39,18 @@ namespace Contest.Model
 			var test = false;
 
 			foreach (var ennemy in othercells)
+			{
+				test |= Collision(Position, ennemy);
+				if (test) return true;
+			}
+			return false;
+		}
+
+		public bool CollisionEatable(Position cible, List<PlayerCell> othercells)
+		{
+			var test = false;
+
+			foreach (var ennemy in othercells.Where(x => !IsMangeable(x, Game.gameInfo.MassRatioToAbsorb)))
 			{
 				test |= Collision(Position, ennemy);
 				if (test) return true;

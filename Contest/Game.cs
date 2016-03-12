@@ -182,11 +182,11 @@ namespace Contest
 		private Cell NextCelltoReach(TurnInfo turn, PlayerCell myCurrentCell, List<bool> cellTarget)
 		{
 			List<PlayerCell> enemy = turn.PlayerCells.Where(x => x.PlayerId != playerId).ToList();
-			var enemyToEat = enemy.FirstOrDefault(x => myCurrentCell.IsMangeable(x, gameInfo.MassRatioToAbsorb));
+			var enemyToEat = enemy.Where(x => myCurrentCell.IsMangeable(x, gameInfo.MassRatioToAbsorb)).ToList());
 
-			if (enemyToEat != null)
+			foreach (var e in enemyToEat)
 			{
-				return enemyToEat;
+				myCurrentCell.Collision(e.Position, enemy);
 			}
 
 			Cell toReach = turn.Cells[0];
