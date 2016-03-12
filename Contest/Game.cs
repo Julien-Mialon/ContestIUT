@@ -71,8 +71,10 @@ namespace Contest
 
 				Output(turn);
 
-				if (turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass) < gameInfo.CellStartingMass * 0.75)
+				float mass = turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass);
+                if (mass < gameInfo.CellStartingMass * 0.5)
 				{
+					Logger.Error("Sepuku : " + mass);
 					_client.SendTurnInstruction(turn, new List<Action>(), true);
 				}
 				else
@@ -84,7 +86,7 @@ namespace Contest
 
 		private void Output(TurnInfo turn)
 		{
-			Logger.Info("Turn : " + turn.TurnId);
+			Logger.Error("Turn : " + turn.TurnId);
 			Logger.Info("Initial cells " + turn.InitialCellCount);
 			/*
 			foreach (var i in turn.InitialCellRemainingTurn)
