@@ -143,6 +143,8 @@ namespace Contest
 				Mass = gameInfo.InitialNeutralCellMass
 			}));
 
+			turn.Cells = turn.Cells.OrderByDescending(x => x.Mass).ToList();
+
 			List<bool> cellTarget = new List<bool>();
 			turn.Cells.ForEach(x => cellTarget.Add(true));
 
@@ -180,14 +182,22 @@ namespace Contest
 		private Cell NextCelltoReach(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
 		{
 			Cell toReach = turn.Cells[0];
-			float min = Compare(myCurrentCell, toReach);
+			float availableDistance = (gameInfo.CellSpeed - myCurrentCell.Mass*gameInfo.SpeedLossFactor);
+
+			float distance = Compare(myCurrentCell, toReach);
+			if (distance/availableDistance < 5)
+			{
+				return toReach;
+			}
+
 			foreach (var neutralCell in turn.Cells.Where((x, index) => cellTarget[index]))
 			{
-				var tmp = Compare(myCurrentCell, neutralCell);
-				if (tmp < min)// && !IsInCorner(neutralCell))
+				//var tmp = Compare(myCurrentCell, neutralCell);
+
+				distance = Compare(myCurrentCell, toReach);
+				if (distance / availableDistance < 5)
 				{
-					min = tmp;
-					toReach = neutralCell;
+					return toReach;
 				}
 			}
 			cellTarget[turn.Cells.IndexOf(toReach)] = false;
