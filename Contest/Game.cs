@@ -73,9 +73,9 @@ namespace Contest
 				Output(turn);
 
 				float mass = turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass);
-                if (dieCount < 0 || mass < gameInfo.CellStartingMass * 0.75)
-                {
-	                dieCount++;
+				if (dieCount < 0 || mass < gameInfo.CellStartingMass * 0.75)
+				{
+					dieCount++;
 					Logger.Error("Sepuku : " + mass);
 					_client.SendTurnInstruction(turn, new List<Action>(), true);
 				}
@@ -182,35 +182,36 @@ namespace Contest
 		private Cell NextCelltoReach(TurnInfo turn, PlayerCell myCurrentCell, List<bool> cellTarget)
 		{
 			List<PlayerCell> enemy = turn.PlayerCells.Where(x => x.PlayerId != playerId).ToList();
-			var enemyToEat = enemy.Where(x => myCurrentCell.IsMangeable(x, gameInfo.MassRatioToAbsorb)).ToList());
-
-			foreach (var e in enemyToEat)
+			var enemyToEat = enemy.FirstOrDefault(x => myCurrentCell.IsMangeable(x, gameInfo.MassRatioToAbsorb)
+											  && !myCurrentCell.CollisionEatable(x.Position, enemy)
+				);
+			if (enemyToEat != null)
 			{
-				myCurrentCell.Collision(e.Position, enemy);
+				return enemyToEat;
 			}
 
 			Cell toReach = turn.Cells[0];
-			float availableDistance = (gameInfo.CellSpeed - myCurrentCell.Mass*gameInfo.SpeedLossFactor);
+			float availableDistance = (gameInfo.CellSpeed - myCurrentCell.Mass * gameInfo.SpeedLossFactor);
 
 			if (Math.Abs(toReach.Mass - gameInfo.InitialNeutralCellMass) < 1)
 			{
 				Logger.Error("### => Go default");
-				var list = turn.Cells.Where(x => Compare(x, myCurrentCell)/availableDistance > 10).ToList();
-
-				return list.FirstOrDefault();	
+				return turn.Cells.FirstOrDefault(x => Compare(x, myCurrentCell) / availableDistance > 10
+				 && !myCurrentCell.CollisionEatable(x.Position, enemy)
+					);
 			}
-			
-			if ((!IsInCorner(toReach) || myCurrentCell.Mass > gameInfo.MaximumCellMass*0.5) && cellTarget[0])
-				{
-					cellTarget[turn.Cells.IndexOf(toReach)] = false;
-					return toReach;
-				}
+
+			if ((!IsInCorner(toReach) || myCurrentCell.Mass > gameInfo.MaximumCellMass * 0.5) && cellTarget[0] && !myCurrentCell.CollisionEatable(toReach.Position, enemy))
+			{
+				cellTarget[turn.Cells.IndexOf(toReach)] = false;
+				return toReach;
+			}
 
 			foreach (var neutralCell in turn.Cells.Where((x, index) => cellTarget[index]))
 			{
 				//var tmp = Compare(myCurrentCell, neutralCell);
 
-				if (IsInCorner(neutralCell) && myCurrentCell.Mass < gameInfo.MaximumCellMass * 0.5)
+				if (IsInCorner(neutralCell) && !myCurrentCell.CollisionEatable(neutralCell.Position, enemy) && myCurrentCell.Mass < gameInfo.MaximumCellMass * 0.5)
 				{
 					continue;
 				}

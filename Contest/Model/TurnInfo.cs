@@ -34,13 +34,14 @@ namespace Contest.Model
 			//todo à changer si ratio à l'envers
 			return Mass / ennemyCell.Mass > ratio;
 		}
+        
 		public bool Collision(Position cible, List<PlayerCell> othercells)
 		{
 			var test = false;
 
 			foreach (var ennemy in othercells)
 			{
-				test |= Collision(Position, ennemy);
+                test |= Collision(cible, ennemy);
 				if (test) return true;
 			}
 			return false;
@@ -58,11 +59,11 @@ namespace Contest.Model
 			return false;
 		}
 
-		public bool Collision(Position moi, PlayerCell cible)
+        public bool Collision(Position cible, PlayerCell enemy)
 		{
-			if (Math.Sqrt((this.Position.X - cible.Position.X) * (this.Position.X - cible.Position.X)
-				+ (this.Position.Y - cible.Position.Y) * (this.Position.Y - cible.Position.Y))
-				> (this.Mass + cible.CurrentSpeed))
+            if (Math.Sqrt((cible.X-enemy.Position.X)*(cible.X-enemy.Position.X)
+                + (cible.Y-enemy.Position.Y)*(cible.Y-enemy.Position.Y))
+                >(this.Mass+enemy.CurrentSpeed))
 
 				return true;
 			return false;
