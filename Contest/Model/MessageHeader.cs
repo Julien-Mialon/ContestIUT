@@ -14,7 +14,7 @@ namespace Contest.Model
 	    public const int WELCOME = 5;
 	    public const int GAME_STARTS = 6;
 	    public const int GAME_ENDS = 7;
-	    public const int TURN = 7;
-	    public const int TURN_ACK = 8;
+	    public const int TURN = 8;
+	    public const int TURN_ACK = 9;
     }
 }
