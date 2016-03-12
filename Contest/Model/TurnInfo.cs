@@ -2,6 +2,9 @@
 
 namespace Contest.Model
 {
+    /// <summary>
+    /// Cellule neutre
+    /// </summary>
 	public class Cell
 	{
 		public uint Id { get; set; }
@@ -11,6 +14,9 @@ namespace Contest.Model
 		public Position Position { get; set; }
 	}
 
+    /// <summary>
+    /// Cellule des joueurs (amis & ennemis)
+    /// </summary>
 	public class PlayerCell : Cell
 	{
 		public uint PlayerId { get; set; }
