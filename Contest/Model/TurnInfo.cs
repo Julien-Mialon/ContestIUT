@@ -80,6 +80,16 @@ namespace Contest.Model
 				return true;
 			return false;
 		}
+
+	    public bool YoloColl(Position c, PlayerCell e)
+	    {
+	        if (Math.Max(Mass, e.Mass) > Math.Abs(
+                    (((c.Y-this.Position.Y)*(e.Position.X-Position.X))
+                    /(c.X-Position.X))-e.Position.X-Position.X
+	            ))
+	            return true;
+	        return false;
+	    }
 	}
 }
 
