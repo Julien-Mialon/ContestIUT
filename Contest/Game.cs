@@ -1,3 +1,5 @@
+using Contest.Model;
+
 namespace Contest
 {
 	public class Game
@@ -11,13 +13,16 @@ namespace Contest
 
 		public void Run()
 		{
-			_client.ReadInitGameData();
+			GameInfo gameInfo = _client.ReadServerWelcomeData();
+			uint playerId = _client.ReadInitGameData();
 
 			ProcessInitData();
 
+			bool first = true;
 			while (true)
 			{
-				_client.ReadTurnGameData();
+				TurnInfo turn = _client.ReadTurnGameData(first);
+				first = false;
 
 				Turn();
 
