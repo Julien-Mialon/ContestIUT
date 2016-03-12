@@ -1,4 +1,7 @@
-﻿namespace Contest
+﻿using System;
+using Contest.Model;
+
+namespace Contest
 {
 	public class Client
 	{
@@ -12,23 +15,57 @@
 		public void Connect()
 		{
 			_client.ConnectAsync();
+			_client.WriteInt8(MessageHeader.LOGIN_PLAYER);
 			_client.WriteString("Tower Dive");
+
+			int ack = _client.ReadChar();
+			if (ack != MessageHeader.LOGIN_ACK)
+			{
+				throw new Exception("Didnt receive Login ACK, got " + ack);
+			}
+
+			Logger.Info("Login ACK");
+
+
 			//TODO : check server result to check if login has been accepted
 		}
 
-		public void ReadServerHomeData()
+		public GameInfo ReadServerWelcomeData()
 		{
-			//TODO :implement
+			int header = _client.ReadChar();
+
+			if (header == MessageHeader.WELCOME)
+			{
+				GameInfo game = new GameInfo();
+				game.Read(_client);
+
+				return game;
+			}
+			throw new Exception("Error welcome message");
 		}
 
-		public void ReadInitGameData()
+		public uint ReadInitGameData()
 		{
-			//TODO : implement
+			int header = _client.ReadChar();
+
+			if (header != MessageHeader.GAME_STARTS)
+			{
+				throw new Exception("Expect game start");
+			}
+
+			uint playerId = _client.ReadInt();
+			return playerId;
 		}
 
 		public void ReadTurnGameData()
 		{
-			//TODO
+			int header = _client.ReadChar();
+			if (header != MessageHeader.TURN)
+			{
+				throw new Exception("Expect turn begin");
+			}
+
+
 		}
 
 		public void SendTurnInstruction()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace Contest
 {
@@ -24,7 +25,14 @@ namespace Contest
 	    {
 		    try
 		    {
-				_client.Connect(_host, _port);
+			    ManualResetEvent e = new ManualResetEvent(false);
+
+				_client.ConnectAsync(_host, _port).ContinueWith(x =>
+				{
+					e.Set();
+				});
+
+			    e.WaitOne();
 			    if (_client.Connected)
 			    {
 				    _stream = _client.GetStream();
@@ -71,9 +79,25 @@ namespace Contest
 		    return BitConverter.ToChar(size, 0);
 	    }
 
-		public int ReadInt()
+		public uint ReadInt()
 		{
-			const int readSize = sizeof(int);
+			const int readSize = sizeof(uint);
+
+			byte[] size = new byte[readSize];
+			int readCount = Read(size, 0, readSize);
+			if (readCount < readSize)
+			{
+				Logger.Error($"SocketClient.ReadInt : invalid read count {readCount}");
+				throw new Exception("SocketClient.ReadInt");
+			}
+
+			return BitConverter.ToUInt32(size, 0);
+		}
+
+	    public float ReadFloat()
+	    {
+			const int readSize = sizeof(float);
+			Logger.Info("Float size : " + readSize);
 
 			byte[] size = new byte[readSize];
 			int readCount = Read(size, 0, readSize);
@@ -109,7 +133,13 @@ namespace Contest
 				Logger.Error($"SocketClient.ReadString : invalid read count {readCount}");
 				throw new Exception("SocketClient.ReadString");
 			}
-			return Encoding.ASCII.GetString(size, 0, readSize);
+
+			StringBuilder str = new StringBuilder();
+			for (int i = 0; i < readCount; ++i)
+			{
+				str.Append((char) size[i]);
+			}
+			return str.ToString();
 		}
 
 		protected void Write(byte[] packet, int offset, int count)
@@ -118,10 +148,28 @@ namespace Contest
 			_stream.Flush();
 		}
 
+	    public void WriteInt8(int n)
+	    {
+		    byte[] b = BitConverter.GetBytes((char)n);
+
+		    Write(b, b.Length - 1, 1);
+	    }
+
+	    public void WriteInt(int n)
+	    {
+		    byte[] b = BitConverter.GetBytes(n);
+			Write(b, 0, b.Length);
+	    }
+
 	    public void WriteString(string message)
 	    {
-		    byte[] content = Encoding.ASCII.GetBytes(message);
-
+			byte[] content = new byte[message.Length];
+		    for (int i = 0; i < message.Length; ++i)
+		    {
+			    content[i] = (byte)message[i];
+		    }
+			
+		    WriteInt(content.Length);
 		    Write(content, 0, content.Length);
 	    }
 	}
