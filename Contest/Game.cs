@@ -127,6 +127,18 @@ namespace Contest
         
         }   
         
+
+        private bool isInCorner(Cell me)
+        {
+            return isInCorner(me.Position.X, me.Position.Y);
+        }
+        private bool isInCorner(float x, float y)
+        {
+            if(x < 0.25*gameInfo.Width || x > 0.75*gameInfo.Width || y < 0.25*gameInfo.Height || y > 0.75*gameInfo.Height)
+                return true;
+            return false;
+        }
+
         #region Random IA
 	    private IEnumerable<Action> RandomTurn(TurnInfo turn)
         {
