@@ -73,7 +73,7 @@ namespace Contest
 				_client.ReadInt();
 			}
 			TurnInfo turn = new TurnInfo();
-			turn.Read(_client);
+			turn.Read(_client, first);
 			return turn;
 		}
 

@@ -41,7 +41,7 @@ namespace Contest
 			Logger.Info($"GameInfo : initial neutral cell mass = {gameInfo.InitialNeutralCellMass}");
 			Logger.Info($"GameInfo : initial repop time = {gameInfo.InitialNeutralCellRepopTime}");
 			Logger.Info($"GameInfo : initial neutral count = {gameInfo.InitialCellCount}");
-	        for (int i = 0; i < 3 && i < gameInfo.InitialPositions.Count; ++i)
+	        for (int i = 0; i < gameInfo.InitialPositions.Count; ++i)
 	        {
 		        Position cell = gameInfo.InitialPositions[i];
 
@@ -77,12 +77,27 @@ namespace Contest
 		private void Output(TurnInfo turn)
 		{
 			Logger.Info("Turn : " + turn.TurnId);
-			Logger.Info($"My cells : ({turn.CellCount})");
+			Logger.Info("Initial cells " + turn.InitialCellCount);
+			foreach (var i in turn.InitialCellRemainingTurn)
+			{
+				Logger.Info($"(remaining = {i})");
+			}
 
+			Logger.Info($"My cells : ({turn.CellCount})");
 			foreach (var i in turn.Cells)
 			{
 				Logger.Info($"(id = {i.Id}, mass={i.Mass}, position={i.Position.X};{i.Position.Y}");
 			}
+
+			Logger.Info($"Viruses : " + turn.VirusCount);
+			Logger.Info($"player : " + turn.PlayerCellCount);
+
+			Logger.Info($"players : " + turn.PlayerCount);
+			foreach (var i in turn.Players)
+			{
+				Logger.Info($"id({i.PlayerId}) name({i.PlayerName}) cells({i.CellCount}) mass({i.Mass}) score({i.Score})");
+			}
+
 		}
 
 		protected virtual void ProcessInitData()
