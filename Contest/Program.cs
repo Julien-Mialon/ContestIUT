@@ -13,7 +13,7 @@ namespace Contest
 		/// <param name="args"></param>
 		public void Main(string[] args)
 		{
-			Logger.Initialize(Logger.Level.Debug);
+			Logger.Initialize(Logger.Level.Warning);
 
 			goto debugMode;
 
