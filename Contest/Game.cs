@@ -129,7 +129,7 @@ namespace Contest
 		}
 
 
-		//farm
+#region Farm
 		private IEnumerable<Action> FarmIA(TurnInfo turn)
 		{
 			turn.Cells.AddRange(gameInfo.InitialPositions.Where((x, index) => (turn.InitialCellRemainingTurn[index] == 0)).Select((x, index) => new Cell()
@@ -167,12 +167,12 @@ namespace Contest
 		private Cell NextCelltoReach(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
 		{
 			var toReach = turn.Cells[0];
-			var min = Compare(myCurrentCell, toReach);
+			var min = CompareDist(myCurrentCell, toReach);
 			foreach (var neutralCell in turn.Cells.Where(
 				x => cellTarget[turn.Cells.IndexOf(x)]))
 			{
-				var tmp = Compare(myCurrentCell, neutralCell);
-				if (tmp < min)// && !IsInCorner(neutralCell))
+				var tmp = CompareDist(myCurrentCell, neutralCell);
+				if (tmp < min && !IsInCorner(neutralCell))
 				{
 					min = tmp;
 					toReach = neutralCell;
@@ -181,6 +181,21 @@ namespace Contest
 			cellTarget[turn.Cells.IndexOf(toReach)] = false;
 			return toReach;
 		}
+        /// <summary>
+        /// Plus grosse cellule atteignable
+        /// </summary>
+        /// <param name="turn"></param>
+        /// <param name="myCurrentCell"></param>
+        /// <param name="cellTarget"></param>
+        /// <returns></returns>
+        private Cell NextCelltoReach2(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
+        {
+            var max_speed = gameInfo.CellSpeed - myCurrentCell.Mass*gameInfo.SpeedLossFactor;
+            var test =
+                turn.Cells.Where((x, index) => CompareDist(myCurrentCell, x) < max_speed && cellTarget[index]).ToList();
+            test.Sort((x,y)=>x.Mass>y.Mass?1:0);
+            return test[0];
+        }
 
 		private Action FarmMoveAction(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
 		{
@@ -191,7 +206,7 @@ namespace Contest
 			};
 
 		}
-		private float Compare(Cell a, Cell b)
+		private float CompareDist(Cell a, Cell b)
 		{
 			var posa = a.Position;
 			var posb = b.Position;
@@ -212,7 +227,8 @@ namespace Contest
 			return false;
 		}
 
-
+#endregion
+#region Random
 		//random
 		private IEnumerable<Action> RandomTurn(TurnInfo turn)
 		{
@@ -278,5 +294,6 @@ namespace Contest
 				Y = y,
 			};
 		}
+#endregion
 	}
 }
