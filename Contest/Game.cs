@@ -141,11 +141,14 @@ namespace Contest
 
 			List<bool> cellTarget = new List<bool>();
 			turn.Cells.ForEach(x => cellTarget.Add(true));
+
+			int cellCount = turn.PlayerCells.Count(x => x.PlayerId == playerId);
 			foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
 			{
-				if (turn.PlayerCells.Count(x => x.PlayerId == playerId) < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 2 * gameInfo.MinimumCellMass)
+				if (cellCount + 1 < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 2 * gameInfo.MinimumCellMass)
 				{
 					yield return FarmDivideAction(turn, myCell, cellTarget);
+					cellCount++;
 				}
 				else
 				{
