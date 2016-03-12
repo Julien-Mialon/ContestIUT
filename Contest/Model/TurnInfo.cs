@@ -53,7 +53,7 @@ namespace Contest.Model
 
 			foreach (var ennemy in othercells.Where(x => !IsMangeable(x, Game.gameInfo.MassRatioToAbsorb)))
 			{
-				test |= Collision(cible, ennemy);
+				test |= VoiceCollision(cible, ennemy);
 				if (test) return true;
 			}
 			return false;
@@ -64,6 +64,16 @@ namespace Contest.Model
             if (Math.Sqrt((cible.X-enemy.Position.X)*(cible.X-enemy.Position.X)
                 + (cible.Y-enemy.Position.Y)*(cible.Y-enemy.Position.Y))
                 >(this.Mass+enemy.CurrentSpeed))
+
+				return true;
+			return false;
+		}
+
+		public bool VoiceCollision(Position cible, PlayerCell enemy)
+		{
+			if (Math.Sqrt((cible.X - enemy.Position.X) * (cible.X - enemy.Position.X)
+				+ (cible.Y - enemy.Position.Y) * (cible.Y - enemy.Position.Y))
+				> (Math.Max(Mass, enemy.Mass) + enemy.CurrentSpeed))
 
 				return true;
 			return false;
