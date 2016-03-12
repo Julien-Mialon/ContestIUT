@@ -54,13 +54,24 @@ namespace Contest
 
         private IEnumerable<Action> FarmIA(TurnInfo turn)
         {
-            Cell toReach;
             foreach (var myCell in turn.PlayerCells.Where(x=>x.PlayerId==playerId))
             {
+                var toReach = turn.Cells[0];
+                var min = compare(myCell, toReach);
                 foreach (var neutralCell in turn.Cells)
                 {
-                    compare(myCell,neutralCell)
+                    var tmp = compare(myCell, neutralCell);
+                    if (tmp < min)
+                    {
+                        min = tmp;
+                        toReach = neutralCell;
+                    }
                 }
+                yield return new MoveAction()
+                {
+                    CellId = myCell.Id,
+                    Position = toReach.Position
+                };
             }
             
         }
