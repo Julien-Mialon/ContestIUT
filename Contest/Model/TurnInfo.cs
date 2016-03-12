@@ -23,15 +23,12 @@ namespace Contest.Model
 
 		public uint IsolatedTurnsRemaining { get; set; }
 
+        public float CurrentSpeed { get; }
+
         public bool IsMangeable(PlayerCell ennemyCell,float ratio)
         {
             //todo à changer si ratio à l'envers
             return Mass / ennemyCell.Mass > ratio;
-        }
-
-        public bool Collision(Position cible, List<PlayerCell> othercells)
-        {
-            return true;
         }
 	}
 
