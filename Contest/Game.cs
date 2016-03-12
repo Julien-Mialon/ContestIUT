@@ -64,7 +64,7 @@ namespace Contest
 
 				if(first)
 				{
-				first = false;
+					first = false;
 					turn = _client.ReadTurnGameData(false);
 				}
 

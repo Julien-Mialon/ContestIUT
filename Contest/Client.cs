@@ -70,8 +70,8 @@ namespace Contest
 				{
 					throw new Exception("Expect turn begin = " + header);
 				}
+				_client.ReadInt();
 			}
-			_client.ReadInt();
 			TurnInfo turn = new TurnInfo();
 			turn.Read(_client);
 			return turn;
