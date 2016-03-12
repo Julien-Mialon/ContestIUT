@@ -109,14 +109,14 @@ namespace Contest
         {
             return RandomTurn(turn);
         }
-#region FarmIA
+        #region FarmIA
         private IEnumerable<Action> FarmIA(TurnInfo turn)
         {
             List<bool> cellTarget=new List<bool>();
             turn.Cells.ForEach(x=>cellTarget.Add(true));
             foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
             {
-                if (myCell.Mass > 2 * gameInfo.MinimumCellMass)
+                if (turn.PlayerCells.Count(x=>x.PlayerId==playerId) < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 2 * gameInfo.MinimumCellMass)
                 {
                     yield return FarmDivideAction(turn,myCell,cellTarget);
                 }
