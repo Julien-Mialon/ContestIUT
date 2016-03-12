@@ -148,7 +148,7 @@ namespace Contest
 			int cellCount = myCells.Count;
 			foreach (var myCell in myCells)
 			{
-				if (cellCount + 1 < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 4 * gameInfo.CellStartingMass)
+				if (cellCount + 1 < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 0.9 * gameInfo.MaximumCellMass)
 				{
 					Logger.Error("Splitting");
 					yield return FarmDivideAction(turn, myCell, cellTarget);
@@ -179,8 +179,7 @@ namespace Contest
 		{
 			Cell toReach = turn.Cells[0];
 			float min = Compare(myCurrentCell, toReach);
-			foreach (var neutralCell in turn.Cells.Where(
-				(x, index) => cellTarget[index]))
+			foreach (var neutralCell in turn.Cells.Where((x, index) => cellTarget[index]))
 			{
 				var tmp = Compare(myCurrentCell, neutralCell);
 				if (tmp < min)// && !IsInCorner(neutralCell))
