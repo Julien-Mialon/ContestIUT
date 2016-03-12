@@ -239,7 +239,7 @@ namespace Contest
 		}
 		private bool IsInCorner(float x, float y)
 		{
-			if (x < 0.15 * gameInfo.Width || x > 0.85 * gameInfo.Width || y < 0.15 * gameInfo.Height || y > 0.85 * gameInfo.Height)
+			if (x < 0.05 * gameInfo.Width || x > 0.95 * gameInfo.Width || y < 0.05 * gameInfo.Height || y > 0.95 * gameInfo.Height)
 				return true;
 			return false;
 		}
