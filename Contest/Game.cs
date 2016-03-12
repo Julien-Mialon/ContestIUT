@@ -70,7 +70,9 @@ namespace Contest
             //TODO faire comparaison
 	        var posa = a.Position;
 	        var posb = b.Position;
-	        return a;
+
+	        return Math.Sqrt((posb.Y-posa.Y)*(posb.Y-posa.Y)
+                +(posb.Y-posa.Y)*(posb.Y-posa.Y));
 	    }
 
         #region Random IA
