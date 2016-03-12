@@ -38,7 +38,7 @@ namespace Contest.Model
 
         public bool Collision(Position cible, List<PlayerCell> othercells)
         {
-            
+            return true;
         }
 	}
 
