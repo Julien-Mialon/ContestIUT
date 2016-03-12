@@ -64,13 +64,13 @@ namespace Contest
 
 				if(first)
 				{
-					first = false;
+				first = false;
 					turn = _client.ReadTurnGameData(false);
 				}
 
 				Output(turn);
 
-				_client.SendTurnInstruction(turn, Turn(turn).ToList(), false);
+                _client.SendTurnInstruction(turn, Turn(turn).ToList(), false);
 			}
 		}
 
@@ -119,30 +119,60 @@ namespace Contest
         {
             return RandomTurn(turn);
         }
-
+#region FarmIA
         private IEnumerable<Action> FarmIA(TurnInfo turn)
         {
-            foreach (var myCell in turn.PlayerCells.Where(x=>x.PlayerId==playerId))
+            List<bool> cellTarget=new List<bool>();
+            turn.Cells.ForEach(x=>cellTarget.Add(true));
+            foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
+            {
+                if (myCell.Mass > 2 * gameInfo.MinimumCellMass)
+                {
+                    yield return FarmDivideAction(turn,myCell,cellTarget);
+                }
+                else
+                {
+                   yield return FarmMoveAction(turn, myCell, cellTarget);
+                }
+            }
+        }
+
+	    private Action FarmDivideAction(TurnInfo turn, PlayerCell myCell, List<bool> cellTarget)
+	    {
+	        return new DivideAction()
+	        {
+	            CellId = myCell.Id,
+	            Position = NextCelltoReach(turn, myCell, cellTarget).Position,
+	            Mass = gameInfo.MinimumCellMass
+	        };
+	    }
+
+	    private Cell NextCelltoReach(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
             {
                 var toReach = turn.Cells[0];
-                var min = compare(myCell, toReach);
-                foreach (var neutralCell in turn.Cells)
+            var min = compare(myCurrentCell, toReach);
+                foreach (var neutralCell in turn.Cells.Where(x=>turn.InitialCellRemainingTurn[turn.Cells.IndexOf(x)]==0 && cellTarget[turn.Cells.IndexOf(x)]))
                 {
-                    var tmp = compare(myCell, neutralCell);
+                    var tmp = compare(myCurrentCell, neutralCell);
                     if (tmp < min)
                     {
                         min = tmp;
                         toReach = neutralCell;
                     }
                 }
-                yield return new MoveAction()
-                {
-                    CellId = myCell.Id,
-                    Position = toReach.Position
-                };
-            }
-        }
+	        cellTarget[turn.Cells.IndexOf(toReach)] = false;
+	        return toReach;
+                }
 
+	    private Action FarmMoveAction(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
+	    {
+                 return new MoveAction()
+                {
+                    CellId = myCurrentCell.Id,
+                    Position = NextCelltoReach(turn,myCurrentCell,cellTarget).Position
+                };
+            
+        }
 	    private float compare(Cell a, Cell b)
 	    {
 	        var posa = a.Position;
@@ -152,6 +182,18 @@ namespace Contest
         
         }   
         
+
+        private bool isInCorner(Cell me)
+        {
+            return isInCorner(me.Position.X, me.Position.Y);
+        }
+        private bool isInCorner(float x, float y)
+        {
+            if(x < 0.25*gameInfo.Width || x > 0.75*gameInfo.Width || y < 0.25*gameInfo.Height || y > 0.75*gameInfo.Height)
+                return true;
+            return false;
+	    }
+#endregion
         #region Random IA
 	    private IEnumerable<Action> RandomTurn(TurnInfo turn)
         {
