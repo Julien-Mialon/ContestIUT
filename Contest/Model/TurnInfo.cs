@@ -68,9 +68,12 @@ namespace Contest.Model
 
 		public List<Player> Players { get; } = new List<Player>(); 
 
-	    public void Read(SocketClient client)
+	    public void Read(SocketClient client, bool first)
 	    {
-		    TurnId = client.ReadInt();
+		    if (!first)
+		    {
+			    TurnId = client.ReadInt();
+		    }
 
 		    InitialCellCount = client.ReadInt();
 		    for (int i = 0; i < InitialCellCount; ++i)

@@ -41,7 +41,7 @@ namespace Contest
 			Logger.Info($"GameInfo : initial neutral cell mass = {gameInfo.InitialNeutralCellMass}");
 			Logger.Info($"GameInfo : initial repop time = {gameInfo.InitialNeutralCellRepopTime}");
 			Logger.Info($"GameInfo : initial neutral count = {gameInfo.InitialCellCount}");
-	        for (int i = 0; i < 3 && i < gameInfo.InitialPositions.Count; ++i)
+	        for (int i = 0; i < gameInfo.InitialPositions.Count; ++i)
 	        {
 		        Position cell = gameInfo.InitialPositions[i];
 
@@ -59,14 +59,45 @@ namespace Contest
 			while (true)
 			{
 				TurnInfo turn = _client.ReadTurnGameData(first);
+
+				Output(turn);
+
 				if(first)
 				{
 				first = false;
 					turn = _client.ReadTurnGameData(false);
 				}
 
+				Output(turn);
+
                 _client.SendTurnInstruction(turn, Turn(turn).ToList(), false);
 			}
+		}
+
+		private void Output(TurnInfo turn)
+		{
+			Logger.Info("Turn : " + turn.TurnId);
+			Logger.Info("Initial cells " + turn.InitialCellCount);
+			foreach (var i in turn.InitialCellRemainingTurn)
+			{
+				Logger.Info($"(remaining = {i})");
+			}
+
+			Logger.Info($"My cells : ({turn.CellCount})");
+			foreach (var i in turn.Cells)
+			{
+				Logger.Info($"(id = {i.Id}, mass={i.Mass}, position={i.Position.X};{i.Position.Y}");
+			}
+
+			Logger.Info($"Viruses : " + turn.VirusCount);
+			Logger.Info($"player : " + turn.PlayerCellCount);
+
+			Logger.Info($"players : " + turn.PlayerCount);
+			foreach (var i in turn.Players)
+			{
+				Logger.Info($"id({i.PlayerId}) name({i.PlayerName}) cells({i.CellCount}) mass({i.Mass}) score({i.Score})");
+			}
+
 		}
 
 		protected virtual void ProcessInitData()
@@ -107,8 +138,8 @@ namespace Contest
 	    }
 
 	    private Cell NextCelltoReach(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
-	    {
-	        var toReach = turn.Cells[0];
+            {
+                var toReach = turn.Cells[0];
             var min = compare(myCurrentCell, toReach);
                 foreach (var neutralCell in turn.Cells.Where(x=>turn.InitialCellRemainingTurn[turn.Cells.IndexOf(x)]==0 && cellTarget[turn.Cells.IndexOf(x)]))
                 {
@@ -121,7 +152,7 @@ namespace Contest
                 }
 	        cellTarget[turn.Cells.IndexOf(toReach)] = false;
 	        return toReach;
-	    }
+                }
 
 	    private Action FarmMoveAction(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
 	    {
@@ -131,13 +162,26 @@ namespace Contest
                     Position = NextCelltoReach(turn,myCurrentCell,cellTarget).Position
                 };
             
-	    }
+        }
 	    private float compare(Cell a, Cell b)
 	    {
-            //TODO faire comparaison
 	        var posa = a.Position;
 	        var posb = b.Position;
-	        return 1f;
+	        return (float)Math.Sqrt((posb.Y-posa.Y)*(posb.Y-posa.Y)
+                +(posb.Y-posa.Y)*(posb.Y-posa.Y));
+        
+        }   
+        
+
+        private bool isInCorner(Cell me)
+        {
+            return isInCorner(me.Position.X, me.Position.Y);
+        }
+        private bool isInCorner(float x, float y)
+        {
+            if(x < 0.25*gameInfo.Width || x > 0.75*gameInfo.Width || y < 0.25*gameInfo.Height || y > 0.75*gameInfo.Height)
+                return true;
+            return false;
 	    }
 #endregion
         #region Random IA
