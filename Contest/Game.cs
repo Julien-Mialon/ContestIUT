@@ -22,9 +22,36 @@ namespace Contest
 		{
 			Logger.Info("Waiting server welcome data");
             gameInfo = _client.ReadServerWelcomeData();
-            Logger.Info("Waiting for init game data");
+
+			Logger.Info($"GameInfo : dimensions = {gameInfo.Width} ; {gameInfo.Height}");
+			Logger.Info($"GameInfo : turns = {gameInfo.TurnsCount}");
+			Logger.Info($"GameInfo : player = {gameInfo.MinPlayers} ; {gameInfo.MaxPlayers}");
+			Logger.Info($"GameInfo : mass absorption = {gameInfo.MassAbsorption}");
+			Logger.Info($"GameInfo : mass ratio absorption = {gameInfo.MassRatioToAbsorb}");
+			Logger.Info($"GameInfo : cells mass = {gameInfo.MinimumCellMass} ; {gameInfo.MaximumCellMass}");
+			Logger.Info($"GameInfo : radius = {gameInfo.RadiusFactor}");
+			Logger.Info($"GameInfo : cellcount = {gameInfo.MaxCellsCountByPlayer}");
+			Logger.Info($"GameInfo : loss per frame  = {gameInfo.MassLossPerFrame}");
+			Logger.Info($"GameInfo : cell speed = {gameInfo.CellSpeed}");
+			Logger.Info($"GameInfo : speed loss = {gameInfo.SpeedLossFactor}");
+			Logger.Info($"GameInfo : viruses mass = {gameInfo.VirusMass}");
+			Logger.Info($"GameInfo : virus create mass = {gameInfo.VirusCreationMass}");
+			Logger.Info($"GameInfo : virus split = {gameInfo.VirusMaxSplit}");
+			Logger.Info($"GameInfo : initial cells = {gameInfo.StartingCellPerPlayer} mass {gameInfo.CellStartingMass}");
+			Logger.Info($"GameInfo : initial neutral cell mass = {gameInfo.InitialNeutralCellMass}");
+			Logger.Info($"GameInfo : initial repop time = {gameInfo.InitialNeutralCellRepopTime}");
+			Logger.Info($"GameInfo : initial neutral count = {gameInfo.InitialCellCount}");
+	        for (int i = 0; i < 3 && i < gameInfo.InitialPositions.Count; ++i)
+	        {
+		        Position cell = gameInfo.InitialPositions[i];
+
+				Logger.Info($"Cell id {i} : ({cell.X}, {cell.Y})");
+	        }
+
+			Logger.Info("Waiting for init game data");
             playerId = _client.ReadInitGameData();
             
+			Logger.Info("Get playerId : " + playerId);
             
 			ProcessInitData();
 
@@ -35,7 +62,7 @@ namespace Contest
 				if(first)
 				{
 					first = false;
-					//turn = _client.ReadTurnGameData(false);
+					turn = _client.ReadTurnGameData(false);
 				}
 
 				_client.SendTurnInstruction(turn, Turn(turn).ToList(), true);
