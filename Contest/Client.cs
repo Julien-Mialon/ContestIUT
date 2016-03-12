@@ -16,6 +16,11 @@
 			//TODO : check server result to check if login has been accepted
 		}
 
+		public void ReadServerHomeData()
+		{
+			//TODO :implement
+		}
+
 		public void ReadInitGameData()
 		{
 			//TODO : implement
