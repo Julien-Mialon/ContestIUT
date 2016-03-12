@@ -78,11 +78,12 @@ namespace Contest
 		{
 			Logger.Info("Turn : " + turn.TurnId);
 			Logger.Info("Initial cells " + turn.InitialCellCount);
+			/*
 			foreach (var i in turn.InitialCellRemainingTurn)
 			{
 				Logger.Info($"(remaining = {i})");
 			}
-
+			// */
 			Logger.Info($"My cells : ({turn.CellCount})");
 			foreach (var i in turn.Cells)
 			{
@@ -90,7 +91,16 @@ namespace Contest
 			}
 
 			Logger.Info($"Viruses : " + turn.VirusCount);
+			foreach (var i in turn.Virus)
+			{
+				Logger.Info($"(id={i.Id}, ({i.Position.X} ; {i.Position.Y})");
+			}
+
 			Logger.Info($"player : " + turn.PlayerCellCount);
+			foreach (var i in turn.PlayerCells)
+			{
+				Logger.Info($"playerId = {i.PlayerId}, id={i.Id}, pos={i.Position.X},{i.Position.Y}, mass={i.Mass}, isolated={i.IsolatedTurnsRemaining}");
+			}
 
 			Logger.Info($"players : " + turn.PlayerCount);
 			foreach (var i in turn.Players)
