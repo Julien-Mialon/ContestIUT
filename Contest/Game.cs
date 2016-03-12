@@ -196,9 +196,9 @@ namespace Contest
 			if (Math.Abs(toReach.Mass - gameInfo.InitialNeutralCellMass) < 1)
 			{
 				Logger.Error("### => Go default");
-				return turn.Cells.FirstOrDefault(x => Compare(x, myCurrentCell) / availableDistance > 10
+				return turn.Cells.FirstOrDefault(x => Compare(x, myCurrentCell) / availableDistance > 5
 				 && !myCurrentCell.CollisionEatable(x.Position, enemy)
-					);
+					) ?? turn.Cells[random.Next(turn.Cells.Count)];
 			}
 
 			if ((!IsInCorner(toReach) || myCurrentCell.Mass > gameInfo.MaximumCellMass * 0.5) && cellTarget[0] && !myCurrentCell.CollisionEatable(toReach.Position, enemy))
