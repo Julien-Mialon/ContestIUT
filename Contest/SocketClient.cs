@@ -155,7 +155,7 @@ namespace Contest
 		    Write(b, b.Length - 1, 1);
 	    }
 
-	    public void WriteInt(int n)
+	    public void WriteInt(uint n)
 	    {
 		    byte[] b = BitConverter.GetBytes(n);
 			Write(b, 0, b.Length);
@@ -169,8 +169,14 @@ namespace Contest
 			    content[i] = (byte)message[i];
 		    }
 			
-		    WriteInt(content.Length);
+		    WriteInt((uint)content.Length);
 		    Write(content, 0, content.Length);
 	    }
-	}
+
+	    public void WriteFloat(float n)
+	    {
+			byte[] b = BitConverter.GetBytes(n);
+			Write(b, 0, b.Length);
+		}
+    }
 }

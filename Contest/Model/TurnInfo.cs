@@ -40,7 +40,9 @@ namespace Contest.Model
 
     public class TurnInfo
     {
-		public uint InitialCellCount { get; set; }
+		public uint TurnId { get; set; }
+
+        public uint InitialCellCount { get; set; }
 
 		public List<uint> InitialCellRemainingTurn { get; } = new List<uint>();
 
@@ -58,6 +60,8 @@ namespace Contest.Model
 
 	    public void Read(SocketClient client)
 	    {
+		    TurnId = client.ReadInt();
+
 		    InitialCellCount = client.ReadInt();
 		    for (int i = 0; i < InitialCellCount; ++i)
 		    {
