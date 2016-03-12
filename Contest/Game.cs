@@ -86,10 +86,11 @@ namespace Contest
             {
                 foreach (var neutralCell in turn.Cells)
                 {
-                    compare(myCell,neutralCell)
+	                compare(myCell, neutralCell);
                 }
             }
-            
+
+	        return Enumerable.Empty<Action>();
         }
 
 	    private float compare(Cell a, Cell b)
@@ -97,7 +98,7 @@ namespace Contest
             //TODO faire comparaison
 	        var posa = a.Position;
 	        var posb = b.Position;
-	        return a;
+	        return 1f;
 	    }
 
         #region Random IA
