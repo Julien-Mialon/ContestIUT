@@ -15,6 +15,8 @@ namespace Contest
 		{
 			Logger.Initialize(Logger.Level.Debug);
 
+			goto debugMode;
+
 			Logger.Info($"Run with parameters {string.Join(" ", args)}");
 
 			if (args.Length < 2)
@@ -22,7 +24,10 @@ namespace Contest
 				Logger.Critical("Usage : program.cs <host> <port> [<death mode>]");
 				return;
 			}
-
+			goto prodMode;
+debugMode:
+			args = new string[] {"192.168.13.212", "4242"};
+prodMode:
 			Client client;
 			bool isDeathMode = false;
 			try

@@ -124,6 +124,13 @@ namespace Contest
 		    }
 	    }
 
+	    public string ReadString()
+	    {
+		    uint size = ReadInt();
+
+		    return ReadString((int)size);
+	    }
+
 		public string ReadString(int readSize)
 		{
 			byte[] size = new byte[readSize];
