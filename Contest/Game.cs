@@ -202,7 +202,7 @@ namespace Contest
 			var posa = a.Position;
 			var posb = b.Position;
 			return (float)Math.Sqrt((posb.Y - posa.Y) * (posb.Y - posa.Y)
-				+ (posb.Y - posa.Y) * (posb.Y - posa.Y));
+				+ (posb.X - posa.X) * (posb.X - posa.X));
 
 		}
 
