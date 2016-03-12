@@ -52,10 +52,18 @@ namespace Contest
             return RandomTurn(turn);
         }
 
-        /*private IEnumerable<Action> FarmIA(TurnInfo turn)
+        private IEnumerable<Action> FarmIA(TurnInfo turn)
         {
             
-        } */
+        }
+
+	    private Cell compare(Cell a, Cell b)
+	    {
+            //TODO faire comparaison
+	        var posa = a.Position;
+	        var posb = b.Position;
+	        return a;
+	    }
 
         #region Random IA
 	    private IEnumerable<Action> RandomTurn(TurnInfo turn)
