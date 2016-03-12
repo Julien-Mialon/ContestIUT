@@ -20,18 +20,23 @@ namespace Contest
 
         public void Run()
 		{
+			Logger.Info("Waiting server welcome data");
             gameInfo = _client.ReadServerWelcomeData();
+            Logger.Info("Waiting for init game data");
             playerId = _client.ReadInitGameData();
-
+            
+            
 			ProcessInitData();
 
 			bool first = true;
 			while (true)
 			{
 				TurnInfo turn = _client.ReadTurnGameData(first);
-				first = false;
-
-                
+				if(first)
+				{
+					first = false;
+					//turn = _client.ReadTurnGameData(false);
+				}
 
 				_client.SendTurnInstruction(turn, Turn(turn).ToList(), true);
 			}

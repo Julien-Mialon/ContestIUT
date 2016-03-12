@@ -68,7 +68,7 @@ namespace Contest
 				int header = _client.ReadChar();
 				if (header != MessageHeader.TURN)
 				{
-					throw new Exception("Expect turn begin");
+					throw new Exception("Expect turn begin = " + header);
 				}
 			}
 			_client.ReadInt();
