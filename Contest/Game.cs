@@ -145,7 +145,7 @@ namespace Contest
 			int cellCount = turn.PlayerCells.Count(x => x.PlayerId == playerId);
 			foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
 			{
-				if (cellCount + 1 < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 2 * gameInfo.MinimumCellMass)
+				if (cellCount + 1 < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 8 * gameInfo.MinimumCellMass)
 				{
 					yield return FarmDivideAction(turn, myCell, cellTarget);
 					cellCount++;
@@ -163,7 +163,7 @@ namespace Contest
 			{
 				CellId = myCell.Id,
 				Position = NextCelltoReach(turn, myCell, cellTarget).Position,
-				Mass = gameInfo.MinimumCellMass
+				Mass = myCell.Mass / 2
 			};
 		}
 
