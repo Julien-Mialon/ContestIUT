@@ -48,7 +48,7 @@ namespace Contest
 				Logger.Info($"Cell id {i} : ({cell.X}, {cell.Y})");
 	        }
 
-			Logger.Info("Waiting for init game data");
+            Logger.Info("Waiting for init game data");
             playerId = _client.ReadInitGameData();
             
 			Logger.Info("Get playerId : " + playerId);
@@ -65,7 +65,7 @@ namespace Contest
 					turn = _client.ReadTurnGameData(false);
 				}
 
-				_client.SendTurnInstruction(turn, Turn(turn).ToList(), true);
+                _client.SendTurnInstruction(turn, Turn(turn).ToList(), false);
 			}
 		}
 
@@ -79,6 +79,28 @@ namespace Contest
             return RandomTurn(turn);
         }
 
+        private IEnumerable<Action> FarmIA(TurnInfo turn)
+        {
+            Cell toReach;
+            foreach (var myCell in turn.PlayerCells.Where(x=>x.PlayerId==playerId))
+            {
+                foreach (var neutralCell in turn.Cells)
+                {
+                    compare(myCell,neutralCell)
+                }
+            }
+            
+        }
+
+	    private float compare(Cell a, Cell b)
+	    {
+            //TODO faire comparaison
+	        var posa = a.Position;
+	        var posb = b.Position;
+	        return a;
+	    }
+
+        #region Random IA
 	    private IEnumerable<Action> RandomTurn(TurnInfo turn)
         {
             foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
@@ -153,6 +175,6 @@ namespace Contest
             float y = (float)(rand.NextDouble() * gameInfo.Height);
             return new Tuple<float, float>(x, y);
 		}
-
+        #endregion
 	}
 }
