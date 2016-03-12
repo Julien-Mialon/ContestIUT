@@ -54,10 +54,18 @@ namespace Contest
 
         private IEnumerable<Action> FarmIA(TurnInfo turn)
         {
+            Cell toReach;
+            foreach (var myCell in turn.PlayerCells.Where(x=>x.PlayerId==playerId))
+            {
+                foreach (var neutralCell in turn.Cells)
+                {
+                    compare(myCell,neutralCell)
+                }
+            }
             
         }
 
-	    private Cell compare(Cell a, Cell b)
+	    private float compare(Cell a, Cell b)
 	    {
             //TODO faire comparaison
 	        var posa = a.Position;
