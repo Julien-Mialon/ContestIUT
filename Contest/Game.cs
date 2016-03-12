@@ -12,6 +12,7 @@ namespace Contest
 		private readonly Client _client;
         private uint playerId;
         private GameInfo gameInfo;
+		private Random random = new Random(DateTime.Now.Millisecond);
 
 		public Game(Client client)
 		{
@@ -62,7 +63,7 @@ namespace Contest
 
 				Output(turn);
 
-				if(first)
+				if (first)
 				{
 				first = false;
 					turn = _client.ReadTurnGameData(false);
@@ -126,16 +127,18 @@ namespace Contest
         {
             return RandomTurn(turn);
         }
-        #region FarmIA
+
+
+		//farm
         private IEnumerable<Action> FarmIA(TurnInfo turn)
         {
-            List<bool> cellTarget=new List<bool>();
-            turn.Cells.ForEach(x=>cellTarget.Add(true));
+			List<bool> cellTarget = new List<bool>();
+			turn.Cells.ForEach(x => cellTarget.Add(true));
             foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
             {
                 if (turn.PlayerCells.Count(x=>x.PlayerId==playerId) < gameInfo.MaxCellsCountByPlayer && myCell.Mass > 2 * gameInfo.MinimumCellMass)
                 {
-                    yield return FarmDivideAction(turn,myCell,cellTarget);
+					yield return FarmDivideAction(turn, myCell, cellTarget);
                 }
                 else
                 {
@@ -176,7 +179,7 @@ namespace Contest
                  return new MoveAction()
                 {
                     CellId = myCurrentCell.Id,
-                    Position = NextCelltoReach(turn,myCurrentCell,cellTarget).Position
+				Position = NextCelltoReach(turn, myCurrentCell, cellTarget).Position
                 };
             
         }
@@ -184,8 +187,8 @@ namespace Contest
 	    {
 	        var posa = a.Position;
 	        var posb = b.Position;
-	        return (float)Math.Sqrt((posb.Y-posa.Y)*(posb.Y-posa.Y)
-                +(posb.Y-posa.Y)*(posb.Y-posa.Y));
+			return (float)Math.Sqrt((posb.Y - posa.Y) * (posb.Y - posa.Y)
+				+ (posb.Y - posa.Y) * (posb.Y - posa.Y));
         
         }   
         
@@ -200,18 +203,18 @@ namespace Contest
                 return true;
             return false;
 	    }
-        #endregion
-        #region Random IA
+
+
+		//random
 	    private IEnumerable<Action> RandomTurn(TurnInfo turn)
         {
             foreach (var myCell in turn.PlayerCells.Where(x => x.PlayerId == playerId))
             {
-                var rand = new Random();
                 Action act = null;
-                switch (rand.Next(3))
+				switch (random.Next(3))
                 {
                     case 1:
-                        var mass = (float)(rand.NextDouble() * myCell.Mass);
+						var mass = (float)(random.NextDouble() * myCell.Mass);
                         act = myCell.Mass > 2 * gameInfo.MinimumCellMass ? DivideAction(myCell, mass) : MoveAction(myCell);
                         break;
                     case 2:
@@ -221,61 +224,51 @@ namespace Contest
                         act = MoveAction(myCell);
                         break;
                 }
+				if (act != null)
+				{
                 yield return act;
             }
+			}
 	        
 	    }
 
         private Action CreateVirus(Cell cell)
         {
-            var pos = GenererPosition();
             return new CreateVirusAction
             {
                 CellId = cell.Id,
-                Position =
-                {
-                    X = pos.Item1,
-                    Y = pos.Item2
-                }
+				Position = GenererPosition()
             };
         }
 			
         private Action MoveAction(Cell cell)
         {
-            var pos = GenererPosition();
             return new MoveAction
             {
                 CellId = cell.Id,
-                Position =
-                {
-                    X = pos.Item1,
-                    Y = pos.Item2
-		}
+				Position = GenererPosition()
             };
         }
 
         private Action DivideAction(Cell cell, float mass)
 		{
-            var pos = GenererPosition();
-            return new DivideAction()
+			return new DivideAction
             {
                 CellId = cell.Id,
                 Mass = mass,
-                Position =
-                {
-                    X = pos.Item1,
-                    Y = pos.Item2
-                }
+				Position = GenererPosition()
             };
         }
 			
-        private Tuple<float, float> GenererPosition()
+		private Position GenererPosition()
+		{
+			float x = (float)(random.NextDouble() * gameInfo.Width);
+			float y = (float)(random.NextDouble() * gameInfo.Height);
+			return new Position()
         {
-            var rand = new Random();
-            float x = (float)(rand.NextDouble() * gameInfo.Width);
-            float y = (float)(rand.NextDouble() * gameInfo.Height);
-            return new Tuple<float, float>(x, y);
+				X = x,
+				Y = y,
+			};
 		}
-        #endregion
 	}
 }
