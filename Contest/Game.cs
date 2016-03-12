@@ -195,45 +195,28 @@ namespace Contest
 			if (Math.Abs(toReach.Mass - gameInfo.InitialNeutralCellMass) < 0.05)
 			{
 				Logger.Error("### => Go default");
-				var list = turn.Cells.Where(x => Compare(x, myCurrentCell)/availableDistance > 5).ToList();
+				var list = turn.Cells.Where(x => Compare(x, myCurrentCell)/availableDistance > 10).ToList();
 
 				return list[random.Next(list.Count)];	
 			}
 			
-			if (!IsInCorner(toReach) && cellTarget[0])
+			if ((!IsInCorner(toReach) || myCurrentCell.Mass > gameInfo.MaximumCellMass*0.5) && cellTarget[0])
 			{
 				cellTarget[turn.Cells.IndexOf(toReach)] = false;
 				return toReach;
-
-				/*
-				float distance = Compare(myCurrentCell, toReach);
-				if (distance/availableDistance < 5)
-				{
-					cellTarget[turn.Cells.IndexOf(toReach)] = false;
-					return toReach;
-				}
-				*/
 			}
 
 			foreach (var neutralCell in turn.Cells.Where((x, index) => cellTarget[index]))
 			{
 				//var tmp = Compare(myCurrentCell, neutralCell);
 
-				if (IsInCorner(neutralCell))
+				if (IsInCorner(neutralCell) && myCurrentCell.Mass < gameInfo.MaximumCellMass * 0.5)
 				{
 					continue;
 				}
 
 				cellTarget[turn.Cells.IndexOf(neutralCell)] = false;
 				return neutralCell;
-				/*
-				float distance = Compare(myCurrentCell, neutralCell);
-				if (distance / availableDistance < 5)
-				{
-					cellTarget[turn.Cells.IndexOf(neutralCell)] = false;
-					return neutralCell;
-				}
-				*/
 			}
 			cellTarget[turn.Cells.IndexOf(toReach)] = false;
 			return toReach;
