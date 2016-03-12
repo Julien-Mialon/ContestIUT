@@ -70,7 +70,14 @@ namespace Contest
 
 				Output(turn);
 
-                _client.SendTurnInstruction(turn, Turn(turn).ToList(), false);
+			    if (turn.PlayerCells.Where(x => x.PlayerId == playerId).Sum(x => x.Mass) < gameInfo.CellStartingMass)
+			    {
+                    _client.SendTurnInstruction(turn, new List<Action>(), true);
+			    }
+			    else
+			    {
+                    _client.SendTurnInstruction(turn, Turn(turn).ToList(), false);
+			    }
 			}
 		}
 
