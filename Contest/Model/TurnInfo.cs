@@ -32,7 +32,7 @@ namespace Contest.Model
 		public bool IsMangeable(PlayerCell ennemyCell, float ratio)
 		{
 			//todo à changer si ratio à l'envers
-			return Mass / ennemyCell.Mass > ratio;
+			return Mass / ennemyCell.Mass > (ratio * 1.1);
 		}
         
 		public bool Collision(Position cible, List<PlayerCell> othercells)
