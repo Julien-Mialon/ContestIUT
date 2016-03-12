@@ -156,8 +156,11 @@ namespace Contest
 				}
 				else
 				{
-					Logger.Error("Moving");
-					yield return FarmMoveAction(turn, myCell, cellTarget);
+					var action = FarmMoveAction(turn, myCell, cellTarget);
+
+					Logger.Error($"Moving to {action.Position.X}, {action.Position.Y} from {myCell.Position.X}, {myCell.Position.Y}");
+
+					yield return action;
 				}
 			}
 		}
@@ -174,10 +177,10 @@ namespace Contest
 
 		private Cell NextCelltoReach(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
 		{
-			var toReach = turn.Cells[0];
-			var min = Compare(myCurrentCell, toReach);
+			Cell toReach = turn.Cells[0];
+			float min = Compare(myCurrentCell, toReach);
 			foreach (var neutralCell in turn.Cells.Where(
-				x => cellTarget[turn.Cells.IndexOf(x)]))
+				(x, index) => cellTarget[index]))
 			{
 				var tmp = Compare(myCurrentCell, neutralCell);
 				if (tmp < min)// && !IsInCorner(neutralCell))
@@ -190,7 +193,7 @@ namespace Contest
 			return toReach;
 		}
 
-		private Action FarmMoveAction(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
+		private MoveAction FarmMoveAction(TurnInfo turn, Cell myCurrentCell, List<bool> cellTarget)
 		{
 			return new MoveAction()
 			{
@@ -288,3 +291,4 @@ namespace Contest
 		}
 	}
 }
+
