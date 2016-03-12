@@ -23,7 +23,7 @@ namespace Contest.Model
 
 		public uint IsolatedTurnsRemaining { get; set; }
 
-        public float CurrentSpeed { get; }
+        public float CurrentSpeed => Game.gameInfo.CellSpeed - Mass*Game.gameInfo.SpeedLossFactor;
 
         public bool IsMangeable(PlayerCell ennemyCell,float ratio)
         {
