@@ -53,7 +53,11 @@ namespace Contest.Model
 
 			foreach (var ennemy in othercells.Where(x => !IsMangeable(x, Game.gameInfo.MassRatioToAbsorb)))
 			{
-				test |= VoiceCollision(cible, ennemy);
+				test |= VoiceCollision(cible, ennemy) || VoiceCollision(new Position()
+				{
+					X = Math.Abs(cible.X + ennemy.Position.X) / 2,
+                    Y = Math.Abs(cible.Y + ennemy.Position.Y) / 2
+				}, ennemy);
 				if (test) return true;
 			}
 			return false;
