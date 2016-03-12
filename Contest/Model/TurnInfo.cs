@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.CodeDom;
+using System.Collections.Generic;
 
 namespace Contest.Model
 {
@@ -38,7 +40,24 @@ namespace Contest.Model
 
         public bool Collision(Position cible, List<PlayerCell> othercells)
         {
-            return true;
+            var test = false;
+           
+            foreach (var ennemy in othercells)
+            {
+                test |= Collision(Position, ennemy);
+                if (test) return true;
+            }
+            return false;
+        }
+
+        public bool Collision(Position moi, PlayerCell cible)
+        {
+            if (Math.Sqrt((this.Position.X-cible.Position.X)*(this.Position.X-cible.Position.X)
+                + (this.Position.Y-cible.Position.Y)*(this.Position.Y-cible.Position.Y))
+                >(this.Mass+cible.CurrentSpeed))
+                
+                return true;    
+            return false;
         }
 	}
 
